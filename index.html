@@ -47,44 +47,68 @@ const P = {
 };
 
 /* ═══ DATA ═══ */
+const MEDIA_ROOT = {
+  meditations: "media/meditace",
+  tales: "media/pohadky"
+};
+
 const CATEGORIES = [
   { id:"breathing",title:"Dýchání",subtitle:"Návrat k dechu",icon:"🌬️",color:P.peach,
     sessions:[
-      {id:1,title:"Ranní probuzení",duration:"8 min",desc:"Jemné dechové cvičení pro start dne",src:"audio/ranni-probuzeni.mp3"},
-      {id:2,title:"Box breathing",duration:"5 min",desc:"Čtvercové dýchání pro okamžitý klid",src:"audio/box-breathing.mp3"},
-      {id:3,title:"Večerní uvolnění",duration:"12 min",desc:"Hluboký dech před spaním",src:"audio/vecerni-uvolneni.mp3"},
+      {id:1,title:"Ranní probuzení",duration:"8 min",desc:"Jemné dechové cvičení pro start dne",src:`${MEDIA_ROOT.meditations}/dychani/ranni-probuzeni.mp3`},
+      {id:2,title:"Box breathing",duration:"5 min",desc:"Čtvercové dýchání pro okamžitý klid",src:`${MEDIA_ROOT.meditations}/dychani/box-breathing.mp3`},
+      {id:3,title:"Večerní uvolnění",duration:"12 min",desc:"Hluboký dech před spaním",src:`${MEDIA_ROOT.meditations}/dychani/vecerni-uvolneni.mp3`},
     ]},
   { id:"bodyscan",title:"Body Scan",subtitle:"Cesta tělem",icon:"✨",color:P.sage,
     sessions:[
-      {id:4,title:"Rychlý scan",duration:"6 min",desc:"Pozorností skrz celé tělo"},
-      {id:5,title:"Hluboké uvolnění",duration:"20 min",desc:"Uvolnění každého svalu"},
-      {id:6,title:"Jóga nidra",duration:"30 min",desc:"Jogínský spánek – regenerace"},
+      {id:4,title:"Rychlý scan",duration:"6 min",desc:"Pozorností skrz celé tělo",src:`${MEDIA_ROOT.meditations}/body-scan/rychly-scan.mp3`},
+      {id:5,title:"Hluboké uvolnění",duration:"20 min",desc:"Uvolnění každého svalu",src:`${MEDIA_ROOT.meditations}/body-scan/hluboke-uvolneni.mp3`},
+      {id:6,title:"Jóga nidra",duration:"30 min",desc:"Jogínský spánek – regenerace",src:`${MEDIA_ROOT.meditations}/body-scan/joga-nidra.mp3`},
     ]},
   { id:"visual",title:"Vizualizace",subtitle:"Vnitřní krajiny",icon:"🏔️",color:P.lavender,
     sessions:[
-      {id:7,title:"Procházka lesem",duration:"15 min",desc:"Cesta tichým lesem"},
-      {id:8,title:"U moře",duration:"12 min",desc:"Zvuk vln a slaný vzduch"},
-      {id:9,title:"Horský pramen",duration:"10 min",desc:"Čistá voda a ticho hor"},
+      {id:7,title:"Procházka lesem",duration:"15 min",desc:"Cesta tichým lesem",src:`${MEDIA_ROOT.meditations}/vizualizace/prochazka-lesem.mp3`},
+      {id:8,title:"U moře",duration:"12 min",desc:"Zvuk vln a slaný vzduch",src:`${MEDIA_ROOT.meditations}/vizualizace/u-more.mp3`},
+      {id:9,title:"Horský pramen",duration:"10 min",desc:"Čistá voda a ticho hor",src:`${MEDIA_ROOT.meditations}/vizualizace/horsky-pramen.mp3`},
     ]},
   { id:"gratitude",title:"Vděčnost",subtitle:"Otevřené srdce",icon:"💛",color:P.gold,
     sessions:[
-      {id:10,title:"Tři dobré věci",duration:"7 min",desc:"Co dobrého máme"},
-      {id:11,title:"Laskavost k sobě",duration:"10 min",desc:"Mettá meditace"},
-      {id:12,title:"Propojení",duration:"12 min",desc:"Sounáležitost se světem"},
+      {id:10,title:"Tři dobré věci",duration:"7 min",desc:"Co dobrého máme",src:`${MEDIA_ROOT.meditations}/vdecnost/tri-dobre-veci.mp3`},
+      {id:11,title:"Laskavost k sobě",duration:"10 min",desc:"Mettá meditace",src:`${MEDIA_ROOT.meditations}/vdecnost/laskavost-k-sobe.mp3`},
+      {id:12,title:"Propojení",duration:"12 min",desc:"Sounáležitost se světem",src:`${MEDIA_ROOT.meditations}/vdecnost/propojeni.mp3`},
     ]},
   { id:"sleep",title:"Usínání",subtitle:"Ke spánku",icon:"🌙",color:P.sky,
     sessions:[
-      {id:13,title:"Počítání hvězd",duration:"15 min",desc:"Jemné vedení do spánku"},
-      {id:14,title:"Těžké tělo",duration:"20 min",desc:"Propadání do matrace"},
-      {id:15,title:"Noční déšť",duration:"25 min",desc:"Zvuky deště a tichý hlas"},
+      {id:13,title:"Počítání hvězd",duration:"15 min",desc:"Jemné vedení do spánku",src:`${MEDIA_ROOT.meditations}/spanek/pocitani-hvezd.mp3`},
+      {id:14,title:"Těžké tělo",duration:"20 min",desc:"Propadání do matrace",src:`${MEDIA_ROOT.meditations}/spanek/tezke-telo.mp3`},
+      {id:15,title:"Noční déšť",duration:"25 min",desc:"Zvuky deště a tichý hlas",src:`${MEDIA_ROOT.meditations}/spanek/nocni-dest.mp3`},
     ]},
 ];
 
 const TALES={
-  2:[{id:101,title:"O řepě",duration:"4 min",icon:"🌱"},{id:102,title:"O kohoutkovi a slepičce",duration:"5 min",icon:"🐓"},{id:103,title:"O kočičce a pejskovi",duration:"5 min",icon:"🐱"},{id:104,title:"Jak šlo vajíčko na vandr",duration:"4 min",icon:"🥚"}],
-  3:[{id:201,title:"O třech medvědech",duration:"7 min",icon:"🐻"},{id:202,title:"O zlaté rybce",duration:"8 min",icon:"🐟"},{id:203,title:"Palečka",duration:"6 min",icon:"👧"},{id:204,title:"O perníkové chaloupce",duration:"9 min",icon:"🏠"},{id:205,title:"O veliké repě",duration:"6 min",icon:"🥕"}],
-  4:[{id:301,title:"Jak šel Honzík do světa",duration:"12 min",icon:"🌍"},{id:302,title:"Zvířátka a loupežníci",duration:"11 min",icon:"🎵"},{id:303,title:"O Smolíčkovi",duration:"10 min",icon:"🦌"},{id:304,title:"Budulínek",duration:"9 min",icon:"🏡"},{id:305,title:"O neposlušných kůzlátkách",duration:"8 min",icon:"🐐"},{id:306,title:"O červené Karkulce",duration:"10 min",icon:"🧣"}],
+  2:[
+    {id:101,title:"O řepě",duration:"4 min",icon:"🌱",src:`${MEDIA_ROOT.tales}/2/o-repe.mp3`},
+    {id:102,title:"O kohoutkovi a slepičce",duration:"5 min",icon:"🐓",src:`${MEDIA_ROOT.tales}/2/o-kohoutkovi-a-slepicce.mp3`},
+    {id:103,title:"O kočičce a pejskovi",duration:"5 min",icon:"🐱",src:`${MEDIA_ROOT.tales}/2/o-kocicce-a-pejskovi.mp3`},
+    {id:104,title:"Jak šlo vajíčko na vandr",duration:"4 min",icon:"🥚",src:`${MEDIA_ROOT.tales}/2/vajicko-na-vandr.mp3`}
+  ],
+  3:[
+    {id:201,title:"O třech medvědech",duration:"7 min",icon:"🐻",src:`${MEDIA_ROOT.tales}/3/o-trech-medvedech.mp3`},
+    {id:202,title:"O zlaté rybce",duration:"8 min",icon:"🐟",src:`${MEDIA_ROOT.tales}/3/o-zlate-rybce.mp3`},
+    {id:203,title:"Palečka",duration:"6 min",icon:"👧",src:`${MEDIA_ROOT.tales}/3/palecka.mp3`},
+    {id:204,title:"O perníkové chaloupce",duration:"9 min",icon:"🏠",src:`${MEDIA_ROOT.tales}/3/o-pernikove-chaloupce.mp3`},
+    {id:205,title:"O veliké repě",duration:"6 min",icon:"🥕",src:`${MEDIA_ROOT.tales}/3/o-velike-repe.mp3`}
+  ],
+  4:[
+    {id:301,title:"Jak šel Honzík do světa",duration:"12 min",icon:"🌍",src:`${MEDIA_ROOT.tales}/4/honzik-do-sveta.mp3`},
+    {id:302,title:"Zvířátka a loupežníci",duration:"11 min",icon:"🎵",src:`${MEDIA_ROOT.tales}/4/zviratka-a-loupeznici.mp3`},
+    {id:303,title:"O Smolíčkovi",duration:"10 min",icon:"🦌",src:`${MEDIA_ROOT.tales}/4/o-smolickovi.mp3`},
+    {id:304,title:"Budulínek",duration:"9 min",icon:"🏡",src:`${MEDIA_ROOT.tales}/4/budulinek.mp3`},
+    {id:305,title:"O neposlušných kůzlátkách",duration:"8 min",icon:"🐐",src:`${MEDIA_ROOT.tales}/4/o-neposlusnych-kuzlatkach.mp3`},
+    {id:306,title:"O červené Karkulce",duration:"10 min",icon:"🧣",src:`${MEDIA_ROOT.tales}/4/o-cervene-karkulce.mp3`}
+  ]
 };
+
 
 /* ═══ ANIM WRAPPER ═══ */
 function A({children,i=0,d=0}){return <div style={{animation:`fadeUp .65s cubic-bezier(.16,1,.3,1) ${d+i*0.07}s both`}}>{children}</div>;}
@@ -204,7 +228,7 @@ function App(){
     <div style={{minHeight:"100vh",position:"relative",paddingBottom:playing?84:0}}>
       <AbstractBg />
 
-      <div style={{position:"relative",zIndex:1,maxWidth:920,margin:"0 auto",padding:"48px 36px",opacity:tr?0:1,transform:tr?"translateY(8px)":"",transition:"opacity .22s,transform .22s"}}>
+      <div style={{position:"relative",zIndex:1,maxWidth:920,margin:"0 auto",padding:"clamp(22px,4vw,48px) clamp(16px,4vw,36px)",opacity:tr?0:1,transform:tr?"translateY(8px)":"",transition:"opacity .22s,transform .22s"}}>
 
         {/* BACK */}
         {view!=="home"&&(
@@ -244,7 +268,7 @@ function App(){
               {k:"tales",t:"Pohádky na dobrou noc",s:"Pro děti 2–4 roky · usínání s příběhem",icon:"☽",color:P.sage,grad:"linear-gradient(160deg,#E8F2E8,#DCEADC)",shadow:"rgba(141,180,142,0.2)"},
             ].map((it,i)=>(
               <A key={it.k} i={i+1} d={0.12}>
-                <button onClick={()=>go(it.k)} style={{width:"100%",background:it.grad,border:"1.5px solid rgba(255,255,255,0.8)",borderRadius:28,padding:"48px 36px",cursor:"pointer",textAlign:"center",transition:"all .35s cubic-bezier(.16,1,.3,1)",position:"relative",overflow:"hidden",boxShadow:"0 8px 32px "+it.shadow+", inset 0 1px 0 rgba(255,255,255,0.6)"}}
+                <button onClick={()=>go(it.k)} style={{width:"100%",background:it.grad,border:"1.5px solid rgba(255,255,255,0.8)",borderRadius:28,padding:"clamp(22px,4vw,48px) clamp(16px,4vw,36px)",cursor:"pointer",textAlign:"center",transition:"all .35s cubic-bezier(.16,1,.3,1)",position:"relative",overflow:"hidden",boxShadow:"0 8px 32px "+it.shadow+", inset 0 1px 0 rgba(255,255,255,0.6)"}}
                   onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px)";e.currentTarget.style.boxShadow="0 20px 48px "+it.shadow.replace("0.2","0.35");}}
                   onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="0 8px 32px "+it.shadow+", inset 0 1px 0 rgba(255,255,255,0.6)";}}>
                   {/* decorative bg circle */}
@@ -259,6 +283,16 @@ function App(){
               </A>
             ))}
           </div>
+
+          <A i={3} d={0.16}>
+            <div style={{maxWidth:760,margin:"42px auto 0",background:"rgba(255,255,255,0.72)",border:"1.5px solid "+P.blush,borderRadius:22,padding:"20px clamp(16px,3vw,28px)",backdropFilter:"blur(8px)",boxShadow:"0 8px 30px rgba(0,0,0,0.04)"}}>
+              <div style={{fontSize:12,fontWeight:700,letterSpacing:"0.06em",textTransform:"uppercase",color:P.coral,marginBottom:10}}>Kam nahrát audio</div>
+              <p style={{fontSize:14,color:P.muted,lineHeight:1.7,fontWeight:600}}>
+                Nahrajte MP3 soubory do složek <code style={{background:"#fff",padding:"2px 8px",borderRadius:8,color:P.deep}}>media/meditace</code> a <code style={{background:"#fff",padding:"2px 8px",borderRadius:8,color:P.deep}}>media/pohadky</code>.
+                Cesty už jsou připravené v datech u každé nahrávky.
+              </p>
+            </div>
+          </A>
 
           <A i={4} d={0.18}>
             <div style={{textAlign:"center",marginTop:64}}>
@@ -335,7 +369,7 @@ function App(){
               <p style={{color:P.muted,fontSize:16,maxWidth:380,margin:"0 auto",fontWeight:500}}>Kolik je vašemu malému posluchači?</p>
             </div>
           </A>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:18,maxWidth:480,margin:"0 auto"}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(120px,1fr))",gap:18,maxWidth:480,margin:"0 auto"}}>
             {[2,3,4].map((a,i)=>{
               const cs=[P.peach,P.sage,P.lavender];
               const gs=["linear-gradient(160deg,#FDF0E8,#F9E4D8)","linear-gradient(160deg,#E8F2E8,#DCEADC)","linear-gradient(160deg,#F0E8F5,#E8DDF2)"];

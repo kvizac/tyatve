@@ -250,7 +250,62 @@ function App(){
             ))}
           </div>
 
-          <A i={4} d={.18}><div style={{textAlign:"center",marginTop:64}}>
+          {/* ═══ ABOUT SECTION ═══ */}
+          <A i={4} d={.2}>
+            <div style={{marginTop:80,maxWidth:740,margin:"80px auto 0"}}>
+              {/* divider */}
+              <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:16,marginBottom:48}}>
+                <div style={{flex:1,maxWidth:100,height:1,background:`linear-gradient(90deg,transparent,${P.blush})`}}/>
+                <span style={{fontFamily:"'DM Serif Display',serif",fontSize:18,color:P.coral,fontStyle:"italic",opacity:.6}}>o nás</span>
+                <div style={{flex:1,maxWidth:100,height:1,background:`linear-gradient(90deg,${P.blush},transparent)`}}/>
+              </div>
+
+              {/* vision */}
+              <div style={{textAlign:"center",marginBottom:56}}>
+                <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(26px,4vw,38px)",fontWeight:400,fontStyle:"italic",color:P.deep,marginBottom:18,lineHeight:1.3}}>Klid pro celou rodinu</h2>
+                <p style={{fontSize:"clamp(14px,1.8vw,16px)",lineHeight:1.9,color:P.muted,fontWeight:500,maxWidth:580,margin:"0 auto"}}>
+                  Věříme, že vnitřní klid není luxus — je to základ. Když se dospělý zastaví a nadechne, celá rodina to pocítí. A když dítě usíná s klidným příběhem v uších, učí se něco, co mu žádná škola nedá: být v bezpečí samo se sebou.
+                </p>
+              </div>
+
+              {/* two columns */}
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:28,marginBottom:56}}>
+                {/* meditation column */}
+                <div style={{background:"linear-gradient(160deg,#F0E8F5,#E8DDF2)",borderRadius:24,padding:"36px 32px",border:"1.5px solid rgba(255,255,255,.7)",boxShadow:"0 6px 24px rgba(184,169,212,.12), inset 0 1px 0 rgba(255,255,255,.5)"}}>
+                  <span style={{fontSize:36,display:"block",marginBottom:14}}>◯</span>
+                  <h3 style={{fontFamily:"'DM Serif Display',serif",fontSize:22,fontWeight:400,fontStyle:"italic",color:P.deep,marginBottom:12}}>Proč meditace?</h3>
+                  <p style={{fontSize:14,lineHeight:1.8,color:P.muted,fontWeight:500}}>
+                    Meditace nás vrací k přítomnosti. Pomáhá ztišit mysl, uvolnit napětí v těle a znovu najít kontakt sám se sebou. Nemusíte být jogín ani mít hodiny času — stačí pár minut vědomého dechu a pozornosti. Naše nahrávky vás jemně provedou technikami dýchání, body scanu, vizualizace i vděčnosti. Každá je jako malý restart pro vaši mysl.
+                  </p>
+                </div>
+                {/* fairy tales column */}
+                <div style={{background:"linear-gradient(160deg,#E8F2E8,#DCEADC)",borderRadius:24,padding:"36px 32px",border:"1.5px solid rgba(255,255,255,.7)",boxShadow:"0 6px 24px rgba(141,180,142,.12), inset 0 1px 0 rgba(255,255,255,.5)"}}>
+                  <span style={{fontSize:36,display:"block",marginBottom:14}}>☽</span>
+                  <h3 style={{fontFamily:"'DM Serif Display',serif",fontSize:22,fontWeight:400,fontStyle:"italic",color:P.deep,marginBottom:12}}>Proč pohádky?</h3>
+                  <p style={{fontSize:14,lineHeight:1.8,color:P.muted,fontWeight:500}}>
+                    Malé děti ještě neumí meditovat, ale umí naslouchat. Pohádka před spaním je pro ně to, co je meditace pro dospělého — bezpečný prostor, kde se všechno zpomalí. Klidný hlas, známý příběh a jemný rytmus vyprávění pomáhají dítěti uvolnit se, zpracovat den a pokojně usnout. Vybrali jsme příběhy podle věku, aby délka i složitost odpovídaly pozornosti vašeho malého posluchače.
+                  </p>
+                </div>
+              </div>
+
+              {/* connection */}
+              <div style={{background:"#fff",borderRadius:24,padding:"40px 36px",border:`1.5px solid ${P.blush}`,boxShadow:"0 4px 20px rgba(0,0,0,.04)",textAlign:"center",marginBottom:56}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:12,marginBottom:18}}>
+                  <span style={{fontSize:24,color:P.lavender,fontFamily:"'DM Serif Display',serif",fontStyle:"italic"}}>◯</span>
+                  <span style={{fontSize:18,color:P.blush}}>—</span>
+                  <span style={{fontSize:24,color:P.sage,fontFamily:"'DM Serif Display',serif",fontStyle:"italic"}}>☽</span>
+                </div>
+                <h3 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(20px,3vw,26px)",fontWeight:400,fontStyle:"italic",color:P.deep,marginBottom:14,lineHeight:1.3}}>Co meditaci a pohádky spojuje?</h3>
+                <p style={{fontSize:14,lineHeight:1.9,color:P.muted,fontWeight:500,maxWidth:540,margin:"0 auto"}}>
+                  Obojí je cesta ke klidu skrze hlas a naslouchání. Dospělý zavře oči a nechá se vést svým dechem. Dítě zavře oči a nechá se vést příběhem. Výsledek je stejný — tělo se uvolní, mysl se ztiší a přichází pocit bezpečí. Když si najdete svůj rituál vy i vaše dítě, vzniká v rodině společný rytmus klidu, který vás spojuje víc, než si myslíte.
+                </p>
+              </div>
+
+            </div>
+          </A>
+
+          {/* footer */}
+          <A i={6} d={.25}><div style={{textAlign:"center",marginTop:16,marginBottom:20}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14,marginBottom:10}}>
               <div style={{width:40,height:1,background:`linear-gradient(90deg,transparent,${P.blush})`}}/><span style={{fontSize:11,color:P.blush}}>✦</span><div style={{width:40,height:1,background:`linear-gradient(90deg,${P.blush},transparent)`}}/>
             </div>

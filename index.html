@@ -156,8 +156,25 @@ function Player({session,onClose}){
   const [on,setOn]=useState(false);
   const [prog,setProg]=useState(0);
   const aRef=useRef(null);
+  const prevSessionId=useRef(null);
 
+  /* event listeners for timeupdate & ended */
   useEffect(()=>{const a=aRef.current;if(!a)return;const t=()=>{if(a.duration)setProg((a.currentTime/a.duration)*100);};const e=()=>{setOn(false);setProg(0);};a.addEventListener("timeupdate",t);a.addEventListener("ended",e);return()=>{a.removeEventListener("timeupdate",t);a.removeEventListener("ended",e);};},[session]);
+
+  /* auto-play when session changes */
+  useEffect(()=>{
+    if(session.id===prevSessionId.current)return;
+    prevSessionId.current=session.id;
+    setProg(0);
+    const a=aRef.current;
+    if(a&&session.src){
+      a.load();
+      a.play().then(()=>setOn(true)).catch(()=>setOn(false));
+    } else {
+      setOn(true);
+    }
+  },[session]);
+
   const toggle=()=>{const a=aRef.current;if(a&&a.src){if(on)a.pause();else a.play().catch(()=>{});setOn(!on);return;}setOn(!on);};
   const seek=e=>{const a=aRef.current;if(!a||!a.duration)return;const r=e.currentTarget.getBoundingClientRect();a.currentTime=((e.clientX-r.left)/r.width)*a.duration;};
   useEffect(()=>{if(session.src||!on)return;const iv=setInterval(()=>setProg(p=>p>=100?(setOn(false),0):p+0.25),120);return()=>clearInterval(iv);},[on,session.src]);

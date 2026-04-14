@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Ty a Tvé – Meditace & Pohádky</title>
-<meta name="description" content="Prostor pro vnitřní klid. Meditace pro dospělé, pohádky pro nejmenší." />
-<meta property="og:title" content="Ty a Tvé – Meditace & Pohádky" />
-<meta property="og:description" content="Prostor pro vnitřní klid. Meditace pro dospělé, pohádky pro nejmenší." />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<meta name="description" content="Prostor pro vnitřní klid. Meditace pro dospělé, pohádky pro nejmenší."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { scroll-behavior: smooth; }
-body { background: #FDF6EE; color: #2D2A26; font-family: 'Quicksand', sans-serif; overflow-x: hidden; }
-#root { min-height: 100vh; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:#1A1614;color:#E8E0D4;font-family:'Jost',sans-serif;overflow-x:hidden;font-weight:400}
+#root{min-height:100vh}
+::selection{background:rgba(196,163,90,.3);color:#fff}
 
-@keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
-@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-@keyframes popIn { from{opacity:0;transform:scale(.9) translateY(14px)} to{opacity:1;transform:scale(1) translateY(0)} }
-@keyframes floatA { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-20px) rotate(3deg)} }
-@keyframes floatB { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-16px) rotate(-2deg)} }
-@keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
-@keyframes modalBg { from{opacity:0} to{opacity:1} }
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.9) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes modalBg{from{opacity:0}to{opacity:1}}
+@keyframes spinSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes spinReverse{from{transform:rotate(360deg)}to{transform:rotate(0deg)}}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.08);opacity:1}}
+@keyframes floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+@keyframes floatB{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes gentlePulse{0%,100%{opacity:.04}50%{opacity:.07}}
 </style>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -35,31 +38,41 @@ body { background: #FDF6EE; color: #2D2A26; font-family: 'Quicksand', sans-serif
 const {useState,useEffect,useRef}=React;
 
 /* ═══ PALETTE ═══ */
-const P={cream:"#FDF6EE",peach:"#F4A989",coral:"#E07A6B",sage:"#8DB48E",lavender:"#B8A9D4",sky:"#89B8CF",gold:"#D4B563",blush:"#E8C4C0",deep:"#2D2A26",muted:"#7A756E"};
+const C={
+  bg:"#1A1614",bg2:"#211E1B",bg3:"#2A2622",
+  gold:"#C4A35A",goldLight:"#D4B86E",goldDim:"#8A7340",
+  cream:"#E8E0D4",creamDim:"#A89E90",
+  wine:"#6B3A3A",wineLight:"#8B5A5A",
+  forest:"#3A5A42",forestLight:"#5A7A62",
+  plum:"#5A3A6B",plumLight:"#7A5A8B",
+  sky:"#3A5A6B",skyLight:"#5A8AAB",
+  amber:"#7A5A2A",
+  border:"rgba(196,163,90,.12)",borderLight:"rgba(196,163,90,.2)",
+};
 
-/* ═══ DATA – audio cesty odpovídají složkám v /audio/ ═══ */
+/* ═══ DATA ═══ */
 const CATEGORIES=[
-  {id:"breathing",title:"Dýchání",subtitle:"Návrat k dechu",icon:"🌬️",color:P.peach,sessions:[
+  {id:"breathing",title:"Dýchání",subtitle:"Návrat k dechu",icon:"🌬️",color:C.goldLight,accent:C.gold,cardBg:"linear-gradient(145deg,#2A2418,#1E1C16)",sessions:[
     {id:1,title:"Ranní probuzení",duration:"8 min",desc:"Jemné dechové cvičení pro start dne",src:"audio/meditace/dychani/ranni-probuzeni.mp3"},
-    {id:2,title:"Box breathing",duration:"5 min",desc:"Čtvercové dýchání pro okamžitý klid",src:"audio/meditace/dychani/box-breathing.mp3"},
+    {id:2,title:"Čtvercové dýchání",duration:"5 min",desc:"Technika 4-4-4-4 pro okamžitý klid",src:"audio/meditace/dychani/box-breathing.mp3"},
     {id:3,title:"Večerní uvolnění",duration:"12 min",desc:"Hluboký dech před spaním",src:"audio/meditace/dychani/vecerni-uvolneni.mp3"},
   ]},
-  {id:"bodyscan",title:"Body Scan",subtitle:"Cesta tělem",icon:"✨",color:P.sage,sessions:[
-    {id:4,title:"Rychlý scan",duration:"6 min",desc:"Pozorností skrz celé tělo",src:"audio/meditace/body-scan/rychly-scan.mp3"},
+  {id:"bodyscan",title:"Skenování těla",subtitle:"Cesta tělem",icon:"✨",color:C.forestLight,accent:C.forest,cardBg:"linear-gradient(145deg,#1C2A1E,#161E16)",sessions:[
+    {id:4,title:"Rychlé skenování",duration:"6 min",desc:"Pozorností skrz celé tělo",src:"audio/meditace/body-scan/rychly-scan.mp3"},
     {id:5,title:"Hluboké uvolnění",duration:"20 min",desc:"Uvolnění každého svalu",src:"audio/meditace/body-scan/hluboke-uvolneni.mp3"},
     {id:6,title:"Jóga nidra",duration:"30 min",desc:"Jogínský spánek – regenerace",src:"audio/meditace/body-scan/joga-nidra.mp3"},
   ]},
-  {id:"visual",title:"Vizualizace",subtitle:"Vnitřní krajiny",icon:"🏔️",color:P.lavender,sessions:[
+  {id:"visual",title:"Vizualizace",subtitle:"Vnitřní krajiny",icon:"🏔️",color:C.plumLight,accent:C.plum,cardBg:"linear-gradient(145deg,#241C2A,#1C161E)",sessions:[
     {id:7,title:"Procházka lesem",duration:"15 min",desc:"Cesta tichým lesem",src:"audio/meditace/vizualizace/prochazka-lesem.mp3"},
     {id:8,title:"U moře",duration:"12 min",desc:"Zvuk vln a slaný vzduch",src:"audio/meditace/vizualizace/u-more.mp3"},
     {id:9,title:"Horský pramen",duration:"10 min",desc:"Čistá voda a ticho hor",src:"audio/meditace/vizualizace/horsky-pramen.mp3"},
   ]},
-  {id:"gratitude",title:"Vděčnost",subtitle:"Otevřené srdce",icon:"💛",color:P.gold,sessions:[
+  {id:"gratitude",title:"Vděčnost",subtitle:"Otevřené srdce",icon:"💛",color:C.goldLight,accent:C.amber,cardBg:"linear-gradient(145deg,#2A2418,#1E1A14)",sessions:[
     {id:10,title:"Tři dobré věci",duration:"7 min",desc:"Co dobrého máme",src:"audio/meditace/vdecnost/tri-dobre-veci.mp3"},
     {id:11,title:"Laskavost k sobě",duration:"10 min",desc:"Mettá meditace",src:"audio/meditace/vdecnost/laskavost-k-sobe.mp3"},
     {id:12,title:"Propojení",duration:"12 min",desc:"Sounáležitost se světem",src:"audio/meditace/vdecnost/propojeni.mp3"},
   ]},
-  {id:"sleep",title:"Usínání",subtitle:"Ke spánku",icon:"🌙",color:P.sky,sessions:[
+  {id:"sleep",title:"Usínání",subtitle:"Ke spánku",icon:"🌙",color:C.skyLight,accent:C.sky,cardBg:"linear-gradient(145deg,#1C222A,#16191E)",sessions:[
     {id:13,title:"Počítání hvězd",duration:"15 min",desc:"Jemné vedení do spánku",src:"audio/meditace/usinani/pocitani-hvezd.mp3"},
     {id:14,title:"Těžké tělo",duration:"20 min",desc:"Propadání do matrace",src:"audio/meditace/usinani/tezke-telo.mp3"},
     {id:15,title:"Noční déšť",duration:"25 min",desc:"Zvuky deště a tichý hlas",src:"audio/meditace/usinani/nocni-dest.mp3"},
@@ -67,55 +80,103 @@ const CATEGORIES=[
 ];
 
 const TALES={
-  2:[
-    {id:101,title:"O řepě",duration:"4 min",icon:"🌱",src:"audio/pohadky/2roky/o-repe.mp3"},
-    {id:102,title:"O kohoutkovi a slepičce",duration:"5 min",icon:"🐓",src:"audio/pohadky/2roky/o-kohoutkovi-a-slepicce.mp3"},
-    {id:103,title:"O kočičce a pejskovi",duration:"5 min",icon:"🐱",src:"audio/pohadky/2roky/o-kocicce-a-pejskovi.mp3"},
-    {id:104,title:"Jak šlo vajíčko na vandr",duration:"4 min",icon:"🥚",src:"audio/pohadky/2roky/jak-slo-vajicko-na-vandr.mp3"},
-  ],
-  3:[
-    {id:201,title:"O třech medvědech",duration:"7 min",icon:"🐻",src:"audio/pohadky/3roky/o-trech-medvedech.mp3"},
-    {id:202,title:"O zlaté rybce",duration:"8 min",icon:"🐟",src:"audio/pohadky/3roky/o-zlate-rybce.mp3"},
-    {id:203,title:"Palečka",duration:"6 min",icon:"👧",src:"audio/pohadky/3roky/palecka.mp3"},
-    {id:204,title:"O perníkové chaloupce",duration:"9 min",icon:"🏠",src:"audio/pohadky/3roky/o-pernikove-chaloupce.mp3"},
-    {id:205,title:"O veliké repě",duration:"6 min",icon:"🥕",src:"audio/pohadky/3roky/o-velike-repe.mp3"},
-  ],
-  4:[
-    {id:301,title:"Jak šel Honzík do světa",duration:"12 min",icon:"🌍",src:"audio/pohadky/4roky/jak-sel-honzik-do-sveta.mp3"},
-    {id:302,title:"Zvířátka a loupežníci",duration:"11 min",icon:"🎵",src:"audio/pohadky/4roky/zviratka-a-loupeznici.mp3"},
-    {id:303,title:"O Smolíčkovi",duration:"10 min",icon:"🦌",src:"audio/pohadky/4roky/o-smolickovi.mp3"},
-    {id:304,title:"Budulínek",duration:"9 min",icon:"🏡",src:"audio/pohadky/4roky/budulink.mp3"},
-    {id:305,title:"O neposlušných kůzlátkách",duration:"8 min",icon:"🐐",src:"audio/pohadky/4roky/o-neposlusnych-kuzlatkach.mp3"},
-    {id:306,title:"O červené Karkulce",duration:"10 min",icon:"🧣",src:"audio/pohadky/4roky/o-cervene-karkulce.mp3"},
-  ],
+  2:[{id:101,title:"O řepě",duration:"4 min",icon:"🌱",src:"audio/pohadky/2roky/o-repe.mp3"},{id:102,title:"O kohoutkovi a slepičce",duration:"5 min",icon:"🐓",src:"audio/pohadky/2roky/o-kohoutkovi-a-slepicce.mp3"},{id:103,title:"O kočičce a pejskovi",duration:"5 min",icon:"🐱",src:"audio/pohadky/2roky/o-kocicce-a-pejskovi.mp3"},{id:104,title:"Jak šlo vajíčko na vandr",duration:"4 min",icon:"🥚",src:"audio/pohadky/2roky/jak-slo-vajicko-na-vandr.mp3"}],
+  3:[{id:201,title:"O třech medvědech",duration:"7 min",icon:"🐻",src:"audio/pohadky/3roky/o-trech-medvedech.mp3"},{id:202,title:"O zlaté rybce",duration:"8 min",icon:"🐟",src:"audio/pohadky/3roky/o-zlate-rybce.mp3"},{id:203,title:"Palečka",duration:"6 min",icon:"👧",src:"audio/pohadky/3roky/palecka.mp3"},{id:204,title:"O perníkové chaloupce",duration:"9 min",icon:"🏠",src:"audio/pohadky/3roky/o-pernikove-chaloupce.mp3"},{id:205,title:"O veliké repě",duration:"6 min",icon:"🥕",src:"audio/pohadky/3roky/o-velike-repe.mp3"}],
+  4:[{id:301,title:"Jak šel Honzík do světa",duration:"12 min",icon:"🌍",src:"audio/pohadky/4roky/jak-sel-honzik-do-sveta.mp3"},{id:302,title:"Zvířátka a loupežníci",duration:"11 min",icon:"🎵",src:"audio/pohadky/4roky/zviratka-a-loupeznici.mp3"},{id:303,title:"O Smolíčkovi",duration:"10 min",icon:"🦌",src:"audio/pohadky/4roky/o-smolickovi.mp3"},{id:304,title:"Budulínek",duration:"9 min",icon:"🏡",src:"audio/pohadky/4roky/budulink.mp3"},{id:305,title:"O neposlušných kůzlátkách",duration:"8 min",icon:"🐐",src:"audio/pohadky/4roky/o-neposlusnych-kuzlatkach.mp3"},{id:306,title:"O červené Karkulce",duration:"10 min",icon:"🧣",src:"audio/pohadky/4roky/o-cervene-karkulce.mp3"}],
 };
 
-/* ═══ ANIMATION WRAPPER ═══ */
-function A({children,i=0,d=0}){return <div style={{animation:`fadeUp .65s cubic-bezier(.16,1,.3,1) ${d+i*0.07}s both`}}>{children}</div>;}
+/* ═══ HELPERS ═══ */
+function A({children,i=0,d=0}){return <div style={{animation:`fadeUp .7s cubic-bezier(.16,1,.3,1) ${d+i*.07}s both`}}>{children}</div>;}
 
-/* ═══ ABSTRACT BACKGROUND ═══ */
-function AbstractBg(){
+/* ═══ SVG LOGO ═══ */
+function Logo({size=120}){
+  return (
+    <svg width={size} height={size} viewBox="0 0 200 200" style={{display:"block",margin:"0 auto"}}>
+      {/* outer mandala ring */}
+      <g style={{animation:"spinSlow 60s linear infinite",transformOrigin:"100px 100px"}}>
+        {Array.from({length:12}).map((_,i)=>(
+          <line key={i} x1="100" y1="12" x2="100" y2="22" stroke={C.gold} strokeWidth="1" opacity=".3" transform={`rotate(${i*30} 100 100)`}/>
+        ))}
+        <circle cx="100" cy="100" r="88" fill="none" stroke={C.gold} strokeWidth=".6" opacity=".2"/>
+      </g>
+      {/* middle ring with dots */}
+      <g style={{animation:"spinReverse 45s linear infinite",transformOrigin:"100px 100px"}}>
+        <circle cx="100" cy="100" r="72" fill="none" stroke={C.gold} strokeWidth=".5" opacity=".15"/>
+        {Array.from({length:24}).map((_,i)=>(
+          <circle key={i} cx={100+72*Math.cos(i*Math.PI/12)} cy={100+72*Math.sin(i*Math.PI/12)} r="1.2" fill={C.gold} opacity=".25"/>
+        ))}
+      </g>
+      {/* inner decorative ring */}
+      <g style={{animation:"spinSlow 30s linear infinite",transformOrigin:"100px 100px"}}>
+        <circle cx="100" cy="100" r="52" fill="none" stroke={C.gold} strokeWidth=".5" opacity=".2" strokeDasharray="4 8"/>
+      </g>
+      {/* lotus petals */}
+      <g opacity=".85">
+        {Array.from({length:8}).map((_,i)=>(
+          <path key={i} d="M100 60 Q108 80 100 100 Q92 80 100 60" fill="none" stroke={C.gold} strokeWidth="1.2"
+            transform={`rotate(${i*45} 100 100)`} opacity={.4+i*.05}/>
+        ))}
+      </g>
+      {/* inner petals smaller */}
+      <g opacity=".6">
+        {Array.from({length:8}).map((_,i)=>(
+          <path key={i} d="M100 72 Q106 86 100 100 Q94 86 100 72" fill={C.gold} opacity=".12"
+            transform={`rotate(${i*45+22.5} 100 100)`}/>
+        ))}
+      </g>
+      {/* center */}
+      <circle cx="100" cy="100" r="6" fill="none" stroke={C.gold} strokeWidth="1" opacity=".5"/>
+      <circle cx="100" cy="100" r="2.5" fill={C.gold} opacity=".7"/>
+      {/* breathing animation on center */}
+      <circle cx="100" cy="100" r="10" fill="none" stroke={C.gold} strokeWidth=".5" opacity=".3" style={{animation:"breathe 5s ease-in-out infinite"}}/>
+    </svg>
+  );
+}
+
+/* ═══ PATTERNED BACKGROUND ═══ */
+function Background(){
+  const patternSvg=encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><circle cx='40' cy='40' r='1' fill='rgba(196,163,90,0.06)'/><circle cx='0' cy='0' r='1' fill='rgba(196,163,90,0.04)'/><circle cx='80' cy='0' r='1' fill='rgba(196,163,90,0.04)'/><circle cx='0' cy='80' r='1' fill='rgba(196,163,90,0.04)'/><circle cx='80' cy='80' r='1' fill='rgba(196,163,90,0.04)'/><path d='M40 0 L40 6 M40 74 L40 80 M0 40 L6 40 M74 40 L80 40' stroke='rgba(196,163,90,0.03)' stroke-width='0.5'/></svg>`);
+  const mandalaSvg=encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'><circle cx='200' cy='200' r='180' fill='none' stroke='rgba(196,163,90,0.03)' stroke-width='0.5'/><circle cx='200' cy='200' r='140' fill='none' stroke='rgba(196,163,90,0.025)' stroke-width='0.5'/><circle cx='200' cy='200' r='100' fill='none' stroke='rgba(196,163,90,0.02)' stroke-width='0.5'/><circle cx='200' cy='200' r='60' fill='none' stroke='rgba(196,163,90,0.03)' stroke-width='0.5'/></svg>`);
   return (
     <div style={{position:"fixed",inset:0,zIndex:0,pointerEvents:"none",overflow:"hidden"}}>
-      <div style={{position:"absolute",inset:0,background:"linear-gradient(170deg,#FDF6EE 0%,#F9EDE0 25%,#FDF6EE 50%,#F0E8F5 75%,#FDF6EE 100%)"}} />
-      {/* large circles */}
-      <svg style={{position:"absolute",top:"-15%",right:"-10%",width:"55vw",height:"55vw",maxWidth:700,maxHeight:700,animation:"floatA 18s ease-in-out infinite"}} viewBox="0 0 400 400">
-        <circle cx="200" cy="200" r="195" fill="none" stroke={P.peach} strokeWidth="1.5" opacity=".25"/><circle cx="200" cy="200" r="150" fill="none" stroke={P.coral} strokeWidth="1" opacity=".15"/><circle cx="200" cy="200" r="100" fill={P.peach} opacity=".06"/>
-      </svg>
-      <svg style={{position:"absolute",bottom:"-10%",left:"-8%",width:"45vw",height:"45vw",maxWidth:550,maxHeight:550,animation:"floatB 22s ease-in-out infinite"}} viewBox="0 0 400 400">
-        <circle cx="200" cy="200" r="190" fill="none" stroke={P.sage} strokeWidth="1.5" opacity=".2"/><circle cx="200" cy="200" r="140" fill="none" stroke={P.sage} strokeWidth="1" opacity=".12"/><circle cx="200" cy="200" r="85" fill={P.sage} opacity=".05"/>
-      </svg>
-      <svg style={{position:"absolute",top:"35%",left:"50%",transform:"translateX(-50%)",width:"60vw",height:"60vw",maxWidth:800,maxHeight:800,animation:"floatA 25s ease-in-out infinite",animationDelay:"-8s"}} viewBox="0 0 400 400">
-        <circle cx="200" cy="200" r="198" fill="none" stroke={P.lavender} strokeWidth="1" opacity=".15"/><circle cx="200" cy="200" r="160" fill="none" stroke={P.blush} strokeWidth=".8" opacity=".1"/>
-      </svg>
-      {/* dots */}
-      <div style={{position:"absolute",top:"18%",left:"12%",width:12,height:12,borderRadius:"50%",background:P.gold,opacity:.25,animation:"floatA 6s ease-in-out infinite"}}/>
-      <div style={{position:"absolute",top:"72%",right:"15%",width:8,height:8,borderRadius:"50%",background:P.coral,opacity:.2,animation:"floatB 8s ease-in-out infinite"}}/>
-      <div style={{position:"absolute",top:"45%",left:"8%",width:6,height:6,borderRadius:"50%",background:P.lavender,opacity:.3,animation:"floatA 7s ease-in-out infinite",animationDelay:"-3s"}}/>
-      <div style={{position:"absolute",top:"28%",right:"22%",width:10,height:10,borderRadius:"50%",background:P.sage,opacity:.2,animation:"floatB 9s ease-in-out infinite",animationDelay:"-4s"}}/>
-      {/* arcs */}
-      <svg style={{position:"absolute",top:"8%",left:"25%",width:200,opacity:.12,animation:"floatA 14s ease-in-out infinite",animationDelay:"-5s"}} viewBox="0 0 200 100"><path d="M10 90 Q100 -10 190 90" fill="none" stroke={P.sky} strokeWidth="2"/></svg>
-      <svg style={{position:"absolute",bottom:"15%",right:"20%",width:160,opacity:.1,animation:"floatB 16s ease-in-out infinite",animationDelay:"-7s"}} viewBox="0 0 200 100"><path d="M10 10 Q100 110 190 10" fill="none" stroke={P.gold} strokeWidth="2"/></svg>
+      {/* base gradient */}
+      <div style={{position:"absolute",inset:0,background:`linear-gradient(175deg, #1A1614 0%, #1E1814 20%, #1A1614 40%, #18161A 60%, #1A1614 80%, #1C1816 100%)`}}/>
+      {/* dot pattern */}
+      <div style={{position:"absolute",inset:0,backgroundImage:`url("data:image/svg+xml,${patternSvg}")`,backgroundSize:"80px 80px",animation:"gentlePulse 8s ease-in-out infinite"}}/>
+      {/* large mandala center */}
+      <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)",width:"120vw",height:"120vw",maxWidth:1400,maxHeight:1400,backgroundImage:`url("data:image/svg+xml,${mandalaSvg}")`,backgroundSize:"contain",backgroundRepeat:"no-repeat",backgroundPosition:"center",animation:"spinSlow 120s linear infinite"}}/>
+      {/* warm glow orbs */}
+      <div style={{position:"absolute",width:600,height:600,borderRadius:"50%",background:"radial-gradient(circle,rgba(196,163,90,.06) 0%,transparent 70%)",top:"-10%",right:"-5%",animation:"floatA 20s ease-in-out infinite"}}/>
+      <div style={{position:"absolute",width:500,height:500,borderRadius:"50%",background:"radial-gradient(circle,rgba(107,58,58,.06) 0%,transparent 70%)",bottom:"-5%",left:"-5%",animation:"floatB 25s ease-in-out infinite"}}/>
+      <div style={{position:"absolute",width:400,height:400,borderRadius:"50%",background:"radial-gradient(circle,rgba(58,90,66,.05) 0%,transparent 70%)",top:"40%",left:"20%",animation:"floatA 22s ease-in-out infinite",animationDelay:"-8s"}}/>
+      {/* top/bottom vignette */}
+      <div style={{position:"absolute",inset:0,background:"linear-gradient(180deg,rgba(26,22,20,.4) 0%,transparent 20%,transparent 80%,rgba(26,22,20,.6) 100%)"}}/>
+      {/* grain texture */}
+      <div style={{position:"absolute",inset:0,opacity:.03,backgroundImage:`url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,backgroundSize:"180px"}}/>
+    </div>
+  );
+}
+
+/* ═══ DECORATIVE DIVIDER ═══ */
+function Divider({width=200}){
+  return (
+    <svg width={width} height="16" viewBox={`0 0 ${width} 16`} style={{display:"block",margin:"0 auto"}}>
+      <line x1="0" y1="8" x2={width*.35} y2="8" stroke={C.gold} strokeWidth=".5" opacity=".2"/>
+      <line x1={width*.65} y1="8" x2={width} y2="8" stroke={C.gold} strokeWidth=".5" opacity=".2"/>
+      <circle cx={width*.5-12} cy="8" r="1.5" fill={C.gold} opacity=".3"/>
+      <path d={`M${width*.5-5} 8 L${width*.5} 3 L${width*.5+5} 8 L${width*.5} 13 Z`} fill="none" stroke={C.gold} strokeWidth=".7" opacity=".35"/>
+      <circle cx={width*.5+12} cy="8" r="1.5" fill={C.gold} opacity=".3"/>
+    </svg>
+  );
+}
+
+/* ═══ SECTION HEADER ═══ */
+function SectionHead({title,subtitle}){
+  return (
+    <div style={{textAlign:"center",marginBottom:48}}>
+      <Divider width={160}/>
+      <h2 style={{fontFamily:"'Cormorant',serif",fontSize:"clamp(32px,5.5vw,54px)",fontWeight:300,fontStyle:"italic",color:C.cream,marginTop:20,marginBottom:8,letterSpacing:".02em"}}>{title}</h2>
+      {subtitle&&<p style={{color:C.creamDim,fontSize:15,fontWeight:400,letterSpacing:".04em"}}>{subtitle}</p>}
     </div>
   );
 }
@@ -124,7 +185,7 @@ function AbstractBg(){
 function DlBtn({onClick}){
   const [h,setH]=useState(false);
   return <button onClick={e=>{e.stopPropagation();onClick();}} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
-    style={{background:h?`linear-gradient(135deg,${P.peach},${P.coral})`:"#fff",border:`1.5px solid ${h?"transparent":P.blush}`,borderRadius:12,padding:"8px 18px",color:h?"#fff":P.coral,fontSize:13,fontFamily:"'Quicksand',sans-serif",fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:6,flexShrink:0,transition:"all .25s",transform:h?"scale(1.06)":"",boxShadow:h?"0 6px 20px rgba(224,122,107,.3)":"0 2px 8px rgba(0,0,0,.04)"}}>
+    style={{background:h?`linear-gradient(135deg,${C.gold},${C.goldDim})`:C.bg3,border:`1px solid ${h?C.gold:C.border}`,borderRadius:10,padding:"8px 18px",color:h?"#1A1614":C.gold,fontSize:12,fontFamily:"'Jost',sans-serif",fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:6,flexShrink:0,transition:"all .25s",transform:h?"scale(1.05)":"",letterSpacing:".04em",textTransform:"uppercase"}}>
     ⬇ 29 Kč
   </button>;
 }
@@ -132,20 +193,20 @@ function DlBtn({onClick}){
 /* ═══ MODAL ═══ */
 function Modal({item,onClose}){
   return (
-    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(45,42,38,.4)",backdropFilter:"blur(12px)",zIndex:300,display:"flex",alignItems:"center",justifyContent:"center",padding:24,animation:"modalBg .2s ease"}}>
-      <div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:28,padding:"48px 40px",maxWidth:400,width:"100%",animation:"popIn .35s cubic-bezier(.16,1,.3,1)",textAlign:"center",boxShadow:"0 32px 80px rgba(0,0,0,.12)"}}>
-        <div style={{fontSize:60,marginBottom:16}}>{item.icon}</div>
-        <h3 style={{fontFamily:"'DM Serif Display',serif",fontSize:24,fontWeight:400,marginBottom:6,color:P.deep}}>{item.title}</h3>
-        <p style={{color:P.muted,fontSize:14,marginBottom:28}}>Stáhněte si nahrávku pro offline poslech</p>
-        <div style={{background:P.cream,borderRadius:16,padding:"18px 24px",marginBottom:28,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <span style={{color:P.muted,fontSize:15}}>Jednorázově</span>
-          <span style={{fontSize:28,fontWeight:700,fontFamily:"'DM Serif Display',serif",color:P.coral}}>29 Kč</span>
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(10,8,6,.7)",backdropFilter:"blur(16px)",zIndex:300,display:"flex",alignItems:"center",justifyContent:"center",padding:24,animation:"modalBg .2s ease"}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:`linear-gradient(170deg,${C.bg2},${C.bg})`,borderRadius:28,padding:"48px 40px",maxWidth:400,width:"100%",animation:"popIn .35s cubic-bezier(.16,1,.3,1)",textAlign:"center",boxShadow:"0 40px 80px rgba(0,0,0,.4)",border:`1px solid ${C.border}`}}>
+        <div style={{fontSize:60,marginBottom:18}}>{item.icon}</div>
+        <h3 style={{fontFamily:"'Cormorant',serif",fontSize:26,fontWeight:400,fontStyle:"italic",marginBottom:8,color:C.cream}}>{item.title}</h3>
+        <p style={{color:C.creamDim,fontSize:14,marginBottom:28}}>Stáhněte si nahrávku pro offline poslech</p>
+        <div style={{background:"rgba(196,163,90,.06)",borderRadius:16,padding:"20px 24px",marginBottom:28,display:"flex",justifyContent:"space-between",alignItems:"center",border:`1px solid ${C.border}`}}>
+          <span style={{color:C.creamDim,fontSize:15}}>Jednorázově</span>
+          <span style={{fontSize:30,fontWeight:500,fontFamily:"'Cormorant',serif",color:C.gold}}>29 Kč</span>
         </div>
-        <button style={{width:"100%",padding:"16px 0",borderRadius:16,background:`linear-gradient(135deg,${P.peach},${P.coral})`,border:"none",color:"#fff",fontSize:16,fontWeight:700,fontFamily:"'Quicksand',sans-serif",cursor:"pointer",marginBottom:14,transition:"transform .15s",boxShadow:"0 8px 24px rgba(224,122,107,.3)"}}
+        <button style={{width:"100%",padding:"16px 0",borderRadius:16,background:`linear-gradient(135deg,${C.gold},${C.goldDim})`,border:"none",color:"#1A1614",fontSize:15,fontWeight:600,fontFamily:"'Jost',sans-serif",cursor:"pointer",marginBottom:14,transition:"transform .15s",boxShadow:"0 8px 24px rgba(196,163,90,.2)",letterSpacing:".04em",textTransform:"uppercase"}}
           onMouseEnter={e=>e.currentTarget.style.transform="scale(1.02)"} onMouseLeave={e=>e.currentTarget.style.transform=""}>
           Zakoupit a stáhnout
         </button>
-        <button onClick={onClose} style={{background:"none",border:"none",color:P.muted,fontSize:14,cursor:"pointer",fontWeight:600}}>Zrušit</button>
+        <button onClick={onClose} style={{background:"none",border:"none",color:C.creamDim,fontSize:14,cursor:"pointer",fontWeight:500}}>Zrušit</button>
       </div>
     </div>
   );
@@ -156,48 +217,34 @@ function Player({session,onClose}){
   const [on,setOn]=useState(false);
   const [prog,setProg]=useState(0);
   const aRef=useRef(null);
-  const prevSessionId=useRef(null);
+  const prevId=useRef(null);
 
-  /* event listeners for timeupdate & ended */
   useEffect(()=>{const a=aRef.current;if(!a)return;const t=()=>{if(a.duration)setProg((a.currentTime/a.duration)*100);};const e=()=>{setOn(false);setProg(0);};a.addEventListener("timeupdate",t);a.addEventListener("ended",e);return()=>{a.removeEventListener("timeupdate",t);a.removeEventListener("ended",e);};},[session]);
-
-  /* auto-play when session changes */
-  useEffect(()=>{
-    if(session.id===prevSessionId.current)return;
-    prevSessionId.current=session.id;
-    setProg(0);
-    const a=aRef.current;
-    if(a&&session.src){
-      a.load();
-      a.play().then(()=>setOn(true)).catch(()=>setOn(false));
-    } else {
-      setOn(true);
-    }
-  },[session]);
-
+  useEffect(()=>{if(session.id===prevId.current)return;prevId.current=session.id;setProg(0);const a=aRef.current;if(a&&session.src){a.load();a.play().then(()=>setOn(true)).catch(()=>setOn(false));}else{setOn(true);}},[session]);
   const toggle=()=>{const a=aRef.current;if(a&&a.src){if(on)a.pause();else a.play().catch(()=>{});setOn(!on);return;}setOn(!on);};
   const seek=e=>{const a=aRef.current;if(!a||!a.duration)return;const r=e.currentTarget.getBoundingClientRect();a.currentTime=((e.clientX-r.left)/r.width)*a.duration;};
-  useEffect(()=>{if(session.src||!on)return;const iv=setInterval(()=>setProg(p=>p>=100?(setOn(false),0):p+0.25),120);return()=>clearInterval(iv);},[on,session.src]);
+  useEffect(()=>{if(session.src||!on)return;const iv=setInterval(()=>setProg(p=>p>=100?(setOn(false),0):p+.25),120);return()=>clearInterval(iv);},[on,session.src]);
 
   return (
-    <div style={{position:"fixed",bottom:0,left:0,right:0,background:"rgba(255,255,255,.92)",backdropFilter:"blur(20px)",padding:"16px 28px",display:"flex",alignItems:"center",gap:16,zIndex:200,borderTop:`1.5px solid ${P.blush}`,animation:"slideUp .35s cubic-bezier(.16,1,.3,1)",boxShadow:"0 -8px 32px rgba(0,0,0,.06)"}}>
+    <div style={{position:"fixed",bottom:0,left:0,right:0,background:"rgba(26,22,20,.95)",backdropFilter:"blur(24px)",padding:"16px 28px",display:"flex",alignItems:"center",gap:16,zIndex:200,borderTop:`1px solid ${C.border}`,animation:"slideUp .35s cubic-bezier(.16,1,.3,1)"}}>
       {session.src&&<audio ref={aRef} src={session.src} preload="auto"/>}
-      <button onClick={toggle} style={{width:52,height:52,borderRadius:"50%",border:"none",background:`linear-gradient(135deg,${P.peach},${P.coral})`,color:"#fff",fontSize:18,fontWeight:900,cursor:"pointer",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"transform .15s",boxShadow:"0 6px 20px rgba(224,122,107,.3)"}}
-        onMouseEnter={e=>e.currentTarget.style.transform="scale(1.08)"} onMouseLeave={e=>e.currentTarget.style.transform=""}>
+      <button onClick={toggle} style={{width:52,height:52,borderRadius:"50%",border:`1.5px solid ${C.gold}`,background:"transparent",color:C.gold,fontSize:18,fontWeight:700,cursor:"pointer",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"all .2s"}}
+        onMouseEnter={e=>{e.currentTarget.style.background=C.gold;e.currentTarget.style.color="#1A1614";}}
+        onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color=C.gold;}}>
         {on?"⏸":"▶"}
       </button>
       <div style={{flex:1,minWidth:0}}>
-        <div style={{color:P.deep,fontSize:15,fontWeight:700,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{session.title}</div>
-        <div onClick={seek} style={{marginTop:8,height:5,background:P.blush,borderRadius:4,cursor:"pointer",overflow:"hidden"}}>
-          <div style={{width:`${prog}%`,height:"100%",background:`linear-gradient(90deg,${P.peach},${P.coral})`,borderRadius:4,transition:"width .12s linear"}}/>
+        <div style={{color:C.cream,fontSize:15,fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",letterSpacing:".02em"}}>{session.title}</div>
+        <div onClick={seek} style={{marginTop:8,height:4,background:"rgba(196,163,90,.12)",borderRadius:3,cursor:"pointer",overflow:"hidden"}}>
+          <div style={{width:`${prog}%`,height:"100%",background:`linear-gradient(90deg,${C.gold},${C.goldLight})`,borderRadius:3,transition:"width .12s linear"}}/>
         </div>
       </div>
-      <button onClick={onClose} style={{background:"none",border:"none",color:P.muted,fontSize:26,cursor:"pointer",padding:4,lineHeight:1}}>✕</button>
+      <button onClick={onClose} style={{background:"none",border:"none",color:C.creamDim,fontSize:26,cursor:"pointer",padding:4,lineHeight:1}}>✕</button>
     </div>
   );
 }
 
-/* ═══ MAIN APP ═══ */
+/* ═══ APP ═══ */
 function App(){
   const [view,setView]=useState("home");
   const [cat,setCat]=useState(null);
@@ -209,189 +256,179 @@ function App(){
   const go=(v,p)=>{setTr(true);setTimeout(()=>{setView(v);if(v==="ms")setCat(p);if(v==="fs")setAge(p);setTr(false);window.scrollTo({top:0,behavior:"smooth"});},220);};
   const back=()=>{if(view==="ms")go("med");else if(view==="fs")go("tales");else go("home");};
 
-  const bgMap=c=>({[P.peach]:"linear-gradient(160deg,#FDF0E8,#F9E4D8)",[P.sage]:"linear-gradient(160deg,#E8F2E8,#DCEADC)",[P.lavender]:"linear-gradient(160deg,#F0E8F5,#E8DDF2)",[P.gold]:"linear-gradient(160deg,#F8F0DC,#F2E8C8)",[P.sky]:"linear-gradient(160deg,#E4F0F6,#D8E8F0)"}[c]||P.cream);
-
   return (
     <div style={{minHeight:"100vh",position:"relative",paddingBottom:playing?84:0}}>
-      <AbstractBg/>
+      <Background/>
       <div style={{position:"relative",zIndex:1,maxWidth:920,margin:"0 auto",padding:"48px 36px",opacity:tr?0:1,transform:tr?"translateY(8px)":"",transition:"opacity .22s,transform .22s"}}>
 
-        {view!=="home"&&<A><button onClick={back} style={{background:"#fff",border:`1.5px solid ${P.blush}`,borderRadius:14,padding:"10px 24px",color:P.muted,fontSize:14,cursor:"pointer",fontFamily:"'Quicksand',sans-serif",fontWeight:700,marginBottom:36,transition:"all .2s",boxShadow:"0 2px 8px rgba(0,0,0,.04)"}}
-          onMouseEnter={e=>{e.currentTarget.style.borderColor=P.coral;e.currentTarget.style.color=P.coral;}}
-          onMouseLeave={e=>{e.currentTarget.style.borderColor=P.blush;e.currentTarget.style.color=P.muted;}}>← zpět</button></A>}
+        {/* NAV */}
+        {view!=="home"&&<A><button onClick={back} style={{background:"rgba(196,163,90,.06)",border:`1px solid ${C.border}`,borderRadius:12,padding:"10px 24px",color:C.creamDim,fontSize:13,cursor:"pointer",fontFamily:"'Jost',sans-serif",fontWeight:500,marginBottom:36,transition:"all .2s",letterSpacing:".04em",textTransform:"uppercase"}}
+          onMouseEnter={e=>{e.currentTarget.style.borderColor=C.gold;e.currentTarget.style.color=C.gold;}}
+          onMouseLeave={e=>{e.currentTarget.style.borderColor=C.border;e.currentTarget.style.color=C.creamDim;}}>
+          ← zpět
+        </button></A>}
 
-        {/* ═══ HOME ═══ */}
+        {/* ═══════ HOME ═══════ */}
         {view==="home"&&<>
-          <A><div style={{textAlign:"center",marginTop:60,marginBottom:72}}>
-            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14,marginBottom:32}}>
-              <div style={{width:50,height:1.5,background:`linear-gradient(90deg,transparent,${P.peach})`,borderRadius:2}}/>
-              <svg width="28" height="28" viewBox="0 0 28 28" style={{animation:"breathe 4s ease-in-out infinite"}}><circle cx="14" cy="14" r="12" fill="none" stroke={P.peach} strokeWidth="1.5" opacity=".5"/><circle cx="14" cy="14" r="6" fill="none" stroke={P.coral} strokeWidth="1" opacity=".4"/><circle cx="14" cy="14" r="2.5" fill={P.coral} opacity=".6"/></svg>
-              <div style={{width:50,height:1.5,background:`linear-gradient(90deg,${P.peach},transparent)`,borderRadius:2}}/>
-            </div>
-            <h1 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(52px,9vw,96px)",fontWeight:400,letterSpacing:"0.01em",lineHeight:1,color:P.deep,fontStyle:"italic"}}>Ty a Tvé</h1>
-            <p style={{marginTop:22,fontSize:"clamp(15px,2vw,18px)",lineHeight:1.8,color:P.muted,maxWidth:500,margin:"22px auto 0",fontWeight:500}}>Prostor pro vnitřní klid. Meditace pro dospělé, pohádky pro&nbsp;nejmenší. Protože každý si zaslouží chvíli ticha.</p>
+          <A><div style={{textAlign:"center",marginTop:48,marginBottom:24}}>
+            <Logo size={130}/>
           </div></A>
 
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:24,maxWidth:740,margin:"0 auto"}}>
+          <A i={1}><div style={{textAlign:"center",marginBottom:64}}>
+            <h1 style={{fontFamily:"'Cormorant',serif",fontSize:"clamp(52px,9vw,88px)",fontWeight:300,letterSpacing:".06em",lineHeight:1,color:C.cream,fontStyle:"italic",marginBottom:20}}>
+              Ty a Tvé
+            </h1>
+            <Divider width={180}/>
+            <p style={{marginTop:20,fontSize:"clamp(14px,1.8vw,17px)",lineHeight:1.9,color:C.creamDim,maxWidth:480,margin:"20px auto 0",fontWeight:400,letterSpacing:".02em"}}>
+              Prostor pro vnitřní klid. Meditace pro dospělé, pohádky pro&nbsp;nejmenší. Protože každý si zaslouží chvíli ticha.
+            </p>
+          </div></A>
+
+          {/* two main cards */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:24,maxWidth:760,margin:"0 auto"}}>
             {[
-              {k:"med",t:"Meditace",s:"Vedené meditace pro klid mysli a rovnováhu těla",icon:"◯",color:P.lavender,grad:"linear-gradient(160deg,#F0E8F5,#E8DDF2)",shadow:"rgba(184,169,212,.2)"},
-              {k:"tales",t:"Pohádky na dobrou noc",s:"Pro děti 2–4 roky · usínání s příběhem",icon:"☽",color:P.sage,grad:"linear-gradient(160deg,#E8F2E8,#DCEADC)",shadow:"rgba(141,180,142,.2)"},
+              {k:"med",t:"Meditace",s:"Vedené meditace pro klid mysli a rovnováhu těla",icon:"◯",accent:C.gold,bg:"linear-gradient(155deg,#222018,#1C1A16)",bdr:C.gold},
+              {k:"tales",t:"Pohádky na dobrou noc",s:"Pro děti 2–4 roky · usínání s příběhem",icon:"☽",accent:C.forestLight,bg:"linear-gradient(155deg,#1A221C,#161C18)",bdr:C.forest},
             ].map((it,i)=>(
-              <A key={it.k} i={i+1} d={.12}><button onClick={()=>go(it.k)} style={{width:"100%",background:it.grad,border:"1.5px solid rgba(255,255,255,.8)",borderRadius:28,padding:"48px 36px",cursor:"pointer",textAlign:"center",transition:"all .35s cubic-bezier(.16,1,.3,1)",position:"relative",overflow:"hidden",minHeight:240,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 32px ${it.shadow}, inset 0 1px 0 rgba(255,255,255,.6)`}}
-                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px)";e.currentTarget.style.boxShadow=`0 20px 48px ${it.shadow.replace(".2",".35")}`;}}
-                onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 8px 32px ${it.shadow}, inset 0 1px 0 rgba(255,255,255,.6)`;}}>
-                <div style={{position:"absolute",top:-30,right:-30,width:140,height:140,borderRadius:"50%",background:it.color,opacity:.08}}/>
-                <div style={{position:"absolute",bottom:-20,left:-20,width:100,height:100,borderRadius:"50%",background:it.color,opacity:.06}}/>
-                <span style={{fontFamily:"'DM Serif Display',serif",fontSize:52,color:it.color,display:"block",marginBottom:20,fontStyle:"italic",opacity:.7}}>{it.icon}</span>
-                <div style={{fontFamily:"'DM Serif Display',serif",fontSize:26,fontWeight:400,marginBottom:10,color:P.deep}}>{it.t}</div>
-                <div style={{fontSize:14,color:P.muted,fontWeight:500,lineHeight:1.6,maxWidth:260,margin:"0 auto"}}>{it.s}</div>
-                <div style={{marginTop:24,display:"inline-flex",alignItems:"center",gap:8,background:"#fff",padding:"10px 24px",borderRadius:14,fontSize:14,fontWeight:700,color:P.coral,boxShadow:"0 2px 8px rgba(0,0,0,.05)"}}>Prozkoumat →</div>
+              <A key={it.k} i={i+2} d={.1}><button onClick={()=>go(it.k)} style={{width:"100%",background:it.bg,border:`1px solid ${it.bdr}20`,borderRadius:24,padding:"48px 36px",cursor:"pointer",textAlign:"center",transition:"all .4s cubic-bezier(.16,1,.3,1)",position:"relative",overflow:"hidden",minHeight:260,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}
+                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-6px)";e.currentTarget.style.borderColor=it.bdr+"50";e.currentTarget.style.boxShadow=`0 24px 60px ${it.bdr}12`;}}
+                onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.borderColor=it.bdr+"20";e.currentTarget.style.boxShadow="none";}}>
+                {/* corner ornaments */}
+                <div style={{position:"absolute",top:16,left:16,width:24,height:24,borderTop:`1px solid ${it.accent}30`,borderLeft:`1px solid ${it.accent}30`}}/>
+                <div style={{position:"absolute",top:16,right:16,width:24,height:24,borderTop:`1px solid ${it.accent}30`,borderRight:`1px solid ${it.accent}30`}}/>
+                <div style={{position:"absolute",bottom:16,left:16,width:24,height:24,borderBottom:`1px solid ${it.accent}30`,borderLeft:`1px solid ${it.accent}30`}}/>
+                <div style={{position:"absolute",bottom:16,right:16,width:24,height:24,borderBottom:`1px solid ${it.accent}30`,borderRight:`1px solid ${it.accent}30`}}/>
+                <span style={{fontFamily:"'Cormorant',serif",fontSize:56,color:it.accent,display:"block",marginBottom:20,fontStyle:"italic",opacity:.6}}>{it.icon}</span>
+                <div style={{fontFamily:"'Cormorant',serif",fontSize:28,fontWeight:400,fontStyle:"italic",marginBottom:10,color:C.cream,letterSpacing:".02em"}}>{it.t}</div>
+                <div style={{fontSize:14,color:C.creamDim,fontWeight:400,lineHeight:1.6,maxWidth:260}}>{it.s}</div>
+                <div style={{marginTop:28,display:"inline-flex",alignItems:"center",gap:8,border:`1px solid ${it.accent}40`,padding:"10px 28px",borderRadius:30,fontSize:12,fontWeight:600,color:it.accent,letterSpacing:".08em",textTransform:"uppercase",transition:"all .2s"}}
+                  >Prozkoumat →</div>
               </button></A>
             ))}
           </div>
 
-          {/* ═══ ABOUT SECTION ═══ */}
-          <A i={4} d={.2}>
-            <div style={{marginTop:80,maxWidth:740,margin:"80px auto 0"}}>
-              {/* divider */}
-              <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:16,marginBottom:48}}>
-                <div style={{flex:1,maxWidth:100,height:1,background:`linear-gradient(90deg,transparent,${P.blush})`}}/>
-                <span style={{fontFamily:"'DM Serif Display',serif",fontSize:18,color:P.coral,fontStyle:"italic",opacity:.6}}>o nás</span>
-                <div style={{flex:1,maxWidth:100,height:1,background:`linear-gradient(90deg,${P.blush},transparent)`}}/>
-              </div>
+          {/* ═══ ABOUT ═══ */}
+          <A i={5} d={.15}><div style={{marginTop:88,maxWidth:760,margin:"88px auto 0"}}>
+            <SectionHead title="Klid pro celou rodinu" subtitle="Naše vize"/>
+            <p style={{fontSize:"clamp(14px,1.6vw,16px)",lineHeight:2,color:C.creamDim,fontWeight:400,textAlign:"center",maxWidth:580,margin:"0 auto 56px",letterSpacing:".01em"}}>
+              Věříme, že vnitřní klid není luxus — je to základ. Když se dospělý zastaví a nadechne, celá rodina to pocítí. A když dítě usíná s klidným příběhem v uších, učí se něco, co mu žádná škola nedá: být v bezpečí samo se sebou.
+            </p>
 
-              {/* vision */}
-              <div style={{textAlign:"center",marginBottom:56}}>
-                <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(26px,4vw,38px)",fontWeight:400,fontStyle:"italic",color:P.deep,marginBottom:18,lineHeight:1.3}}>Klid pro celou rodinu</h2>
-                <p style={{fontSize:"clamp(14px,1.8vw,16px)",lineHeight:1.9,color:P.muted,fontWeight:500,maxWidth:580,margin:"0 auto"}}>
-                  Věříme, že vnitřní klid není luxus — je to základ. Když se dospělý zastaví a nadechne, celá rodina to pocítí. A když dítě usíná s klidným příběhem v uších, učí se něco, co mu žádná škola nedá: být v bezpečí samo se sebou.
-                </p>
-              </div>
-
-              {/* two columns */}
-              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:28,marginBottom:56}}>
-                {/* meditation column */}
-                <div style={{background:"linear-gradient(160deg,#F0E8F5,#E8DDF2)",borderRadius:24,padding:"36px 32px",border:"1.5px solid rgba(255,255,255,.7)",boxShadow:"0 6px 24px rgba(184,169,212,.12), inset 0 1px 0 rgba(255,255,255,.5)"}}>
-                  <span style={{fontSize:36,display:"block",marginBottom:14}}>◯</span>
-                  <h3 style={{fontFamily:"'DM Serif Display',serif",fontSize:22,fontWeight:400,fontStyle:"italic",color:P.deep,marginBottom:12}}>Proč meditace?</h3>
-                  <p style={{fontSize:14,lineHeight:1.8,color:P.muted,fontWeight:500}}>
-                    Meditace nás vrací k přítomnosti. Pomáhá ztišit mysl, uvolnit napětí v těle a znovu najít kontakt sám se sebou. Nemusíte být jogín ani mít hodiny času — stačí pár minut vědomého dechu a pozornosti. Naše nahrávky vás jemně provedou technikami dýchání, body scanu, vizualizace i vděčnosti. Každá je jako malý restart pro vaši mysl.
-                  </p>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:24,marginBottom:48}}>
+              {[
+                {icon:"◯",t:"Proč meditace?",txt:"Meditace nás vrací k přítomnosti. Pomáhá ztišit mysl, uvolnit napětí v těle a znovu najít kontakt sám se sebou. Stačí pár minut vědomého dechu. Naše nahrávky vás provedou technikami dýchání, skenování těla, vizualizace i vděčnosti.",bg:"linear-gradient(155deg,#222018,#1C1A16)",accent:C.gold},
+                {icon:"☽",t:"Proč pohádky?",txt:"Malé děti ještě neumí meditovat, ale umí naslouchat. Pohádka před spaním je pro ně bezpečný prostor, kde se vše zpomalí. Klidný hlas a rytmus vyprávění pomáhají dítěti uvolnit se, zpracovat den a pokojně usnout.",bg:"linear-gradient(155deg,#1A221C,#161C18)",accent:C.forestLight},
+              ].map((b,i)=>(
+                <div key={i} style={{background:b.bg,borderRadius:22,padding:"36px 32px",border:`1px solid ${b.accent}18`,position:"relative",overflow:"hidden"}}>
+                  <div style={{position:"absolute",top:14,right:14,width:20,height:20,borderTop:`1px solid ${b.accent}20`,borderRight:`1px solid ${b.accent}20`}}/>
+                  <span style={{fontFamily:"'Cormorant',serif",fontSize:36,color:b.accent,display:"block",marginBottom:14,fontStyle:"italic",opacity:.5}}>{b.icon}</span>
+                  <h3 style={{fontFamily:"'Cormorant',serif",fontSize:22,fontWeight:400,fontStyle:"italic",color:C.cream,marginBottom:14}}>{b.t}</h3>
+                  <p style={{fontSize:14,lineHeight:1.9,color:C.creamDim}}>{b.txt}</p>
                 </div>
-                {/* fairy tales column */}
-                <div style={{background:"linear-gradient(160deg,#E8F2E8,#DCEADC)",borderRadius:24,padding:"36px 32px",border:"1.5px solid rgba(255,255,255,.7)",boxShadow:"0 6px 24px rgba(141,180,142,.12), inset 0 1px 0 rgba(255,255,255,.5)"}}>
-                  <span style={{fontSize:36,display:"block",marginBottom:14}}>☽</span>
-                  <h3 style={{fontFamily:"'DM Serif Display',serif",fontSize:22,fontWeight:400,fontStyle:"italic",color:P.deep,marginBottom:12}}>Proč pohádky?</h3>
-                  <p style={{fontSize:14,lineHeight:1.8,color:P.muted,fontWeight:500}}>
-                    Malé děti ještě neumí meditovat, ale umí naslouchat. Pohádka před spaním je pro ně to, co je meditace pro dospělého — bezpečný prostor, kde se všechno zpomalí. Klidný hlas, známý příběh a jemný rytmus vyprávění pomáhají dítěti uvolnit se, zpracovat den a pokojně usnout. Vybrali jsme příběhy podle věku, aby délka i složitost odpovídaly pozornosti vašeho malého posluchače.
-                  </p>
-                </div>
-              </div>
-
-              {/* connection */}
-              <div style={{background:"#fff",borderRadius:24,padding:"40px 36px",border:`1.5px solid ${P.blush}`,boxShadow:"0 4px 20px rgba(0,0,0,.04)",textAlign:"center",marginBottom:56}}>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:12,marginBottom:18}}>
-                  <span style={{fontSize:24,color:P.lavender,fontFamily:"'DM Serif Display',serif",fontStyle:"italic"}}>◯</span>
-                  <span style={{fontSize:18,color:P.blush}}>—</span>
-                  <span style={{fontSize:24,color:P.sage,fontFamily:"'DM Serif Display',serif",fontStyle:"italic"}}>☽</span>
-                </div>
-                <h3 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(20px,3vw,26px)",fontWeight:400,fontStyle:"italic",color:P.deep,marginBottom:14,lineHeight:1.3}}>Co meditaci a pohádky spojuje?</h3>
-                <p style={{fontSize:14,lineHeight:1.9,color:P.muted,fontWeight:500,maxWidth:540,margin:"0 auto"}}>
-                  Obojí je cesta ke klidu skrze hlas a naslouchání. Dospělý zavře oči a nechá se vést svým dechem. Dítě zavře oči a nechá se vést příběhem. Výsledek je stejný — tělo se uvolní, mysl se ztiší a přichází pocit bezpečí. Když si najdete svůj rituál vy i vaše dítě, vzniká v rodině společný rytmus klidu, který vás spojuje víc, než si myslíte.
-                </p>
-              </div>
-
+              ))}
             </div>
-          </A>
+
+            <div style={{background:C.bg2,borderRadius:22,padding:"40px 36px",border:`1px solid ${C.border}`,textAlign:"center"}}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14,marginBottom:18}}>
+                <span style={{fontFamily:"'Cormorant',serif",fontSize:24,color:C.gold,fontStyle:"italic",opacity:.5}}>◯</span>
+                <Divider width={60}/>
+                <span style={{fontFamily:"'Cormorant',serif",fontSize:24,color:C.forestLight,fontStyle:"italic",opacity:.5}}>☽</span>
+              </div>
+              <h3 style={{fontFamily:"'Cormorant',serif",fontSize:"clamp(20px,3vw,28px)",fontWeight:400,fontStyle:"italic",color:C.cream,marginBottom:16}}>Co meditaci a pohádky spojuje?</h3>
+              <p style={{fontSize:14,lineHeight:2,color:C.creamDim,maxWidth:520,margin:"0 auto"}}>
+                Obojí je cesta ke klidu skrze hlas a naslouchání. Dospělý zavře oči a nechá se vést dechem. Dítě zavře oči a nechá se vést příběhem. Tělo se uvolní, mysl se ztiší a přichází pocit bezpečí. Když si najdete svůj rituál vy i vaše dítě, vzniká v rodině společný rytmus klidu.
+              </p>
+            </div>
+          </div></A>
 
           {/* footer */}
-          <A i={6} d={.25}><div style={{textAlign:"center",marginTop:16,marginBottom:20}}>
-            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14,marginBottom:10}}>
-              <div style={{width:40,height:1,background:`linear-gradient(90deg,transparent,${P.blush})`}}/><span style={{fontSize:11,color:P.blush}}>✦</span><div style={{width:40,height:1,background:`linear-gradient(90deg,${P.blush},transparent)`}}/>
-            </div>
-            <p style={{fontSize:13,color:P.muted,fontWeight:600,letterSpacing:".08em",textTransform:"uppercase",opacity:.6}}>S láskou připravila vaše jóga instruktorka</p>
+          <A i={7} d={.2}><div style={{textAlign:"center",marginTop:72,marginBottom:20}}>
+            <Divider width={120}/>
+            <p style={{marginTop:16,fontSize:11,color:C.creamDim,fontWeight:500,letterSpacing:".12em",textTransform:"uppercase",opacity:.5}}>S láskou připravila vaše jóga instruktorka</p>
           </div></A>
         </>}
 
-        {/* ═══ MEDITATION CATEGORIES ═══ */}
+        {/* ═══════ MEDITATION CATEGORIES ═══════ */}
         {view==="med"&&<>
-          <A><div style={{textAlign:"center",marginBottom:44}}>
-            <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(32px,5vw,52px)",fontWeight:400,fontStyle:"italic",marginBottom:10,color:P.deep}}>Meditace</h2>
-            <p style={{color:P.muted,fontSize:16,maxWidth:400,margin:"0 auto",fontWeight:500}}>Vyberte druh, který vám právě sedí.</p>
-          </div></A>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:18,maxWidth:800,margin:"0 auto"}}>
+          <A><SectionHead title="Meditace" subtitle="Vyberte druh, který vám právě sedí."/></A>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:16,maxWidth:800,margin:"0 auto"}}>
             {CATEGORIES.map((c,i)=>(
-              <A key={c.id} i={i} d={.06}><button onClick={()=>go("ms",c)} style={{width:"100%",background:bgMap(c.color),border:"1.5px solid rgba(255,255,255,.7)",borderRadius:24,padding:"32px 24px",cursor:"pointer",textAlign:"center",transition:"all .3s cubic-bezier(.16,1,.3,1)",minHeight:180,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",boxShadow:`0 6px 24px ${c.color}20, inset 0 1px 0 rgba(255,255,255,.5)`}}
-                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-6px)";e.currentTarget.style.boxShadow=`0 16px 40px ${c.color}30`;}}
-                onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 6px 24px ${c.color}20, inset 0 1px 0 rgba(255,255,255,.5)`;}}>
-                <span style={{fontSize:40,marginBottom:14}}>{c.icon}</span>
-                <div style={{fontFamily:"'DM Serif Display',serif",fontSize:20,fontWeight:400,marginBottom:4,color:P.deep}}>{c.title}</div>
-                <div style={{fontSize:13,color:P.muted,fontWeight:500}}>{c.subtitle}</div>
-                <div style={{marginTop:14,fontSize:11,color:c.color,fontWeight:700,letterSpacing:".06em",textTransform:"uppercase",background:"#fff",padding:"4px 14px",borderRadius:8}}>{c.sessions.length} nahrávky</div>
+              <A key={c.id} i={i} d={.05}><button onClick={()=>go("ms",c)} style={{width:"100%",background:c.cardBg,border:`1px solid ${c.accent}18`,borderRadius:20,padding:"32px 24px",cursor:"pointer",textAlign:"center",transition:"all .3s cubic-bezier(.16,1,.3,1)",minHeight:180,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",position:"relative",overflow:"hidden"}}
+                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-5px)";e.currentTarget.style.borderColor=c.accent+"40";e.currentTarget.style.boxShadow=`0 16px 40px ${c.accent}10`;}}
+                onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.borderColor=c.accent+"18";e.currentTarget.style.boxShadow="";}}>
+                <div style={{position:"absolute",top:12,right:12,width:16,height:16,borderTop:`1px solid ${c.color}20`,borderRight:`1px solid ${c.color}20`}}/>
+                <div style={{position:"absolute",bottom:12,left:12,width:16,height:16,borderBottom:`1px solid ${c.color}20`,borderLeft:`1px solid ${c.color}20`}}/>
+                <span style={{fontSize:38,marginBottom:14}}>{c.icon}</span>
+                <div style={{fontFamily:"'Cormorant',serif",fontSize:20,fontWeight:400,fontStyle:"italic",color:C.cream,marginBottom:4}}>{c.title}</div>
+                <div style={{fontSize:13,color:C.creamDim,fontWeight:400}}>{c.subtitle}</div>
+                <div style={{marginTop:14,fontSize:10,color:c.color,fontWeight:600,letterSpacing:".08em",textTransform:"uppercase"}}>{c.sessions.length} nahrávky</div>
               </button></A>
             ))}
           </div>
         </>}
 
-        {/* ═══ MEDITATION SESSIONS ═══ */}
+        {/* ═══════ MEDITATION SESSIONS ═══════ */}
         {view==="ms"&&cat&&<>
           <A><div style={{textAlign:"center",marginBottom:40}}>
             <span style={{fontSize:48,display:"block",marginBottom:14}}>{cat.icon}</span>
-            <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(30px,5vw,44px)",fontWeight:400,fontStyle:"italic",margin:0,color:P.deep}}>{cat.title}</h2>
-            <p style={{color:P.muted,fontSize:15,marginTop:8,fontWeight:500}}>{cat.subtitle}</p>
+            <h2 style={{fontFamily:"'Cormorant',serif",fontSize:"clamp(30px,5vw,46px)",fontWeight:300,fontStyle:"italic",margin:0,color:C.cream}}>{cat.title}</h2>
+            <p style={{color:C.creamDim,fontSize:14,marginTop:8}}>{cat.subtitle}</p>
+            <div style={{marginTop:16}}><Divider width={100}/></div>
           </div></A>
           <div style={{maxWidth:660,margin:"0 auto",display:"flex",flexDirection:"column",gap:12}}>
             {cat.sessions.map((s,i)=>(
-              <A key={s.id} i={i} d={.06}><div onClick={()=>setPlaying({...s,icon:cat.icon})} style={{background:"#fff",border:`1.5px solid ${playing?.id===s.id?cat.color:P.blush}`,borderRadius:18,padding:"22px 26px",cursor:"pointer",display:"flex",alignItems:"center",gap:18,transition:"all .25s",boxShadow:playing?.id===s.id?`0 6px 24px ${cat.color}20`:"0 2px 10px rgba(0,0,0,.04)"}}
-                onMouseEnter={e=>{e.currentTarget.style.borderColor=cat.color;e.currentTarget.style.boxShadow=`0 8px 28px ${cat.color}18`;e.currentTarget.style.transform="translateY(-2px)";}}
-                onMouseLeave={e=>{e.currentTarget.style.borderColor=playing?.id===s.id?cat.color:P.blush;e.currentTarget.style.boxShadow=playing?.id===s.id?`0 6px 24px ${cat.color}20`:"0 2px 10px rgba(0,0,0,.04)";e.currentTarget.style.transform="";}}>
-                <div style={{width:50,height:50,borderRadius:"50%",background:cat.color+"18",display:"flex",alignItems:"center",justifyContent:"center",color:cat.color,fontSize:16,flexShrink:0,fontWeight:900}}>▶</div>
+              <A key={s.id} i={i} d={.06}><div onClick={()=>setPlaying({...s,icon:cat.icon})} style={{background:playing?.id===s.id?`${cat.accent}10`:C.bg2,border:`1px solid ${playing?.id===s.id?cat.accent+"30":C.border}`,borderRadius:16,padding:"22px 24px",cursor:"pointer",display:"flex",alignItems:"center",gap:18,transition:"all .25s"}}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor=cat.accent+"30";e.currentTarget.style.transform="translateY(-2px)";}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor=playing?.id===s.id?cat.accent+"30":C.border;e.currentTarget.style.transform="";}}>
+                <div style={{width:48,height:48,borderRadius:"50%",border:`1px solid ${cat.accent}30`,display:"flex",alignItems:"center",justifyContent:"center",color:cat.color,fontSize:15,flexShrink:0,fontWeight:700,transition:"all .2s"}}>▶</div>
                 <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontSize:16,fontWeight:700,color:P.deep}}>{s.title}</div>
-                  <div style={{fontSize:13,color:P.muted,marginTop:4,fontWeight:500}}>{s.desc}</div>
+                  <div style={{fontSize:16,fontWeight:500,color:C.cream,letterSpacing:".01em"}}>{s.title}</div>
+                  <div style={{fontSize:13,color:C.creamDim,marginTop:4}}>{s.desc}</div>
                 </div>
-                <span style={{fontSize:13,color:P.muted,marginRight:10,flexShrink:0,fontWeight:600,opacity:.6}}>{s.duration}</span>
+                <span style={{fontSize:12,color:C.creamDim,marginRight:10,flexShrink:0,fontWeight:500,opacity:.6}}>{s.duration}</span>
                 <DlBtn onClick={()=>setDlItem({...s,icon:cat.icon})}/>
               </div></A>
             ))}
           </div>
         </>}
 
-        {/* ═══ TALES AGE ═══ */}
+        {/* ═══════ TALES AGE ═══════ */}
         {view==="tales"&&<>
-          <A><div style={{textAlign:"center",marginBottom:44}}>
-            <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(32px,5vw,52px)",fontWeight:400,fontStyle:"italic",marginBottom:10,color:P.deep}}>Pohádky na dobrou noc</h2>
-            <p style={{color:P.muted,fontSize:16,maxWidth:380,margin:"0 auto",fontWeight:500}}>Kolik je vašemu malému posluchači?</p>
-          </div></A>
+          <A><SectionHead title="Pohádky na dobrou noc" subtitle="Kolik je vašemu malému posluchači?"/></A>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:18,maxWidth:480,margin:"0 auto"}}>
             {[2,3,4].map((a,i)=>{
-              const cs=[P.peach,P.sage,P.lavender];const gs=["linear-gradient(160deg,#FDF0E8,#F9E4D8)","linear-gradient(160deg,#E8F2E8,#DCEADC)","linear-gradient(160deg,#F0E8F5,#E8DDF2)"];const ics=["🧸","🦋","🌟"];
-              return <A key={a} i={i} d={.08}><button onClick={()=>go("fs",a)} style={{width:"100%",aspectRatio:"1/1.2",background:gs[i],border:"1.5px solid rgba(255,255,255,.7)",borderRadius:24,padding:20,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,transition:"all .3s cubic-bezier(.16,1,.3,1)",boxShadow:`0 6px 24px ${cs[i]}20, inset 0 1px 0 rgba(255,255,255,.5)`}}
-                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-7px) scale(1.02)";e.currentTarget.style.boxShadow=`0 20px 48px ${cs[i]}30`;}}
-                onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 6px 24px ${cs[i]}20, inset 0 1px 0 rgba(255,255,255,.5)`;}}>
-                <span style={{fontSize:44}}>{ics[i]}</span>
-                <span style={{fontFamily:"'DM Serif Display',serif",fontSize:40,fontWeight:400,color:P.deep}}>{a}</span>
-                <span style={{fontSize:14,color:P.muted,fontWeight:600}}>roky</span>
+              const cs=[C.gold,C.forestLight,C.plumLight];
+              const ics=["🧸","🦋","🌟"];
+              const bgs=["linear-gradient(155deg,#222018,#1C1A16)","linear-gradient(155deg,#1A221C,#161C18)","linear-gradient(155deg,#201A22,#1A161C)"];
+              return <A key={a} i={i} d={.08}><button onClick={()=>go("fs",a)} style={{width:"100%",aspectRatio:"1/1.2",background:bgs[i],border:`1px solid ${cs[i]}20`,borderRadius:22,padding:20,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,transition:"all .3s cubic-bezier(.16,1,.3,1)",position:"relative",overflow:"hidden"}}
+                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-6px)";e.currentTarget.style.borderColor=cs[i]+"50";e.currentTarget.style.boxShadow=`0 20px 48px ${cs[i]}12`;}}
+                onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.borderColor=cs[i]+"20";e.currentTarget.style.boxShadow="";}}>
+                <div style={{position:"absolute",top:10,left:10,width:14,height:14,borderTop:`1px solid ${cs[i]}20`,borderLeft:`1px solid ${cs[i]}20`}}/>
+                <div style={{position:"absolute",bottom:10,right:10,width:14,height:14,borderBottom:`1px solid ${cs[i]}20`,borderRight:`1px solid ${cs[i]}20`}}/>
+                <span style={{fontSize:42}}>{ics[i]}</span>
+                <span style={{fontFamily:"'Cormorant',serif",fontSize:38,fontWeight:400,color:C.cream,fontStyle:"italic"}}>{a}</span>
+                <span style={{fontSize:13,color:C.creamDim,fontWeight:500}}>roky</span>
               </button></A>;
             })}
           </div>
         </>}
 
-        {/* ═══ TALE SESSIONS ═══ */}
+        {/* ═══════ TALE SESSIONS ═══════ */}
         {view==="fs"&&age&&<>
           <A><div style={{textAlign:"center",marginBottom:40}}>
-            <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(30px,5vw,44px)",fontWeight:400,fontStyle:"italic",margin:0,color:P.deep}}>Pohádky pro {age}leté</h2>
-            <p style={{color:P.muted,fontSize:15,marginTop:8,fontWeight:500}}>{TALES[age].length} pohádek k poslechu</p>
+            <h2 style={{fontFamily:"'Cormorant',serif",fontSize:"clamp(30px,5vw,46px)",fontWeight:300,fontStyle:"italic",margin:0,color:C.cream}}>Pohádky pro {age}leté</h2>
+            <p style={{color:C.creamDim,fontSize:14,marginTop:8}}>{TALES[age].length} pohádek k poslechu</p>
+            <div style={{marginTop:16}}><Divider width={100}/></div>
           </div></A>
           <div style={{maxWidth:660,margin:"0 auto",display:"flex",flexDirection:"column",gap:12}}>
             {TALES[age].map((t,i)=>(
-              <A key={t.id} i={i} d={.05}><div onClick={()=>setPlaying(t)} style={{background:"#fff",border:`1.5px solid ${playing?.id===t.id?P.sage:P.blush}`,borderRadius:18,padding:"22px 26px",cursor:"pointer",display:"flex",alignItems:"center",gap:18,transition:"all .25s",boxShadow:playing?.id===t.id?`0 6px 24px ${P.sage}20`:"0 2px 10px rgba(0,0,0,.04)"}}
-                onMouseEnter={e=>{e.currentTarget.style.borderColor=P.sage;e.currentTarget.style.boxShadow=`0 8px 28px ${P.sage}18`;e.currentTarget.style.transform="translateY(-2px)";}}
-                onMouseLeave={e=>{e.currentTarget.style.borderColor=playing?.id===t.id?P.sage:P.blush;e.currentTarget.style.boxShadow=playing?.id===t.id?`0 6px 24px ${P.sage}20`:"0 2px 10px rgba(0,0,0,.04)";e.currentTarget.style.transform="";}}>
-                <span style={{fontSize:38}}>{t.icon}</span>
+              <A key={t.id} i={i} d={.05}><div onClick={()=>setPlaying(t)} style={{background:playing?.id===t.id?"rgba(58,90,66,.08)":C.bg2,border:`1px solid ${playing?.id===t.id?C.forest+"30":C.border}`,borderRadius:16,padding:"22px 24px",cursor:"pointer",display:"flex",alignItems:"center",gap:18,transition:"all .25s"}}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor=C.forest+"30";e.currentTarget.style.transform="translateY(-2px)";}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor=playing?.id===t.id?C.forest+"30":C.border;e.currentTarget.style.transform="";}}>
+                <span style={{fontSize:36}}>{t.icon}</span>
                 <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontSize:16,fontWeight:700,color:P.deep}}>{t.title}</div>
-                  <div style={{fontSize:13,color:P.muted,marginTop:3,fontWeight:500}}>{t.duration}</div>
+                  <div style={{fontSize:16,fontWeight:500,color:C.cream}}>{t.title}</div>
+                  <div style={{fontSize:13,color:C.creamDim,marginTop:3}}>{t.duration}</div>
                 </div>
                 <DlBtn onClick={()=>setDlItem(t)}/>
               </div></A>

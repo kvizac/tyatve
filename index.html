@@ -88,49 +88,167 @@ const TALES={
 /* ═══ HELPERS ═══ */
 function A({children,i=0,d=0}){return <div style={{animation:`fadeUp .7s cubic-bezier(.16,1,.3,1) ${d+i*.07}s both`}}>{children}</div>;}
 
-/* ═══ SVG LOGO ═══ */
-function Logo({size=120}){
+/* ═══ SVG LOGO — large & prominent ═══ */
+function Logo(){
+  const g=C.gold;
   return (
-    <svg width={size} height={size} viewBox="0 0 200 200" style={{display:"block",margin:"0 auto"}}>
-      {/* outer mandala ring */}
-      <g style={{animation:"spinSlow 60s linear infinite",transformOrigin:"100px 100px"}}>
-        {Array.from({length:12}).map((_,i)=>(
-          <line key={i} x1="100" y1="12" x2="100" y2="22" stroke={C.gold} strokeWidth="1" opacity=".3" transform={`rotate(${i*30} 100 100)`}/>
-        ))}
-        <circle cx="100" cy="100" r="88" fill="none" stroke={C.gold} strokeWidth=".6" opacity=".2"/>
-      </g>
-      {/* middle ring with dots */}
-      <g style={{animation:"spinReverse 45s linear infinite",transformOrigin:"100px 100px"}}>
-        <circle cx="100" cy="100" r="72" fill="none" stroke={C.gold} strokeWidth=".5" opacity=".15"/>
-        {Array.from({length:24}).map((_,i)=>(
-          <circle key={i} cx={100+72*Math.cos(i*Math.PI/12)} cy={100+72*Math.sin(i*Math.PI/12)} r="1.2" fill={C.gold} opacity=".25"/>
-        ))}
-      </g>
-      {/* inner decorative ring */}
-      <g style={{animation:"spinSlow 30s linear infinite",transformOrigin:"100px 100px"}}>
-        <circle cx="100" cy="100" r="52" fill="none" stroke={C.gold} strokeWidth=".5" opacity=".2" strokeDasharray="4 8"/>
-      </g>
-      {/* lotus petals */}
-      <g opacity=".85">
-        {Array.from({length:8}).map((_,i)=>(
-          <path key={i} d="M100 60 Q108 80 100 100 Q92 80 100 60" fill="none" stroke={C.gold} strokeWidth="1.2"
-            transform={`rotate(${i*45} 100 100)`} opacity={.4+i*.05}/>
-        ))}
-      </g>
-      {/* inner petals smaller */}
-      <g opacity=".6">
-        {Array.from({length:8}).map((_,i)=>(
-          <path key={i} d="M100 72 Q106 86 100 100 Q94 86 100 72" fill={C.gold} opacity=".12"
-            transform={`rotate(${i*45+22.5} 100 100)`}/>
-        ))}
-      </g>
-      {/* center */}
-      <circle cx="100" cy="100" r="6" fill="none" stroke={C.gold} strokeWidth="1" opacity=".5"/>
-      <circle cx="100" cy="100" r="2.5" fill={C.gold} opacity=".7"/>
-      {/* breathing animation on center */}
-      <circle cx="100" cy="100" r="10" fill="none" stroke={C.gold} strokeWidth=".5" opacity=".3" style={{animation:"breathe 5s ease-in-out infinite"}}/>
-    </svg>
+    <div style={{position:"relative",width:220,height:220,margin:"0 auto"}}>
+      {/* glow behind */}
+      <div style={{position:"absolute",inset:-40,borderRadius:"50%",background:`radial-gradient(circle,${g}10 0%,transparent 70%)`,animation:"breathe 6s ease-in-out infinite"}}/>
+      <svg width="220" height="220" viewBox="0 0 200 200" style={{display:"block",position:"relative",zIndex:1}}>
+        {/* outermost thin ring with ticks */}
+        <g style={{animation:"spinSlow 80s linear infinite",transformOrigin:"100px 100px"}}>
+          <circle cx="100" cy="100" r="96" fill="none" stroke={g} strokeWidth=".4" opacity=".15"/>
+          {Array.from({length:36}).map((_,i)=>(
+            <line key={i} x1="100" y1={i%3===0?"2":"6"} x2="100" y2={i%3===0?"12":"10"} stroke={g} strokeWidth={i%3===0?".8":".4"} opacity={i%3===0?".3":".15"} transform={`rotate(${i*10} 100 100)`}/>
+          ))}
+        </g>
+        {/* second ring with ornamental dots */}
+        <g style={{animation:"spinReverse 55s linear infinite",transformOrigin:"100px 100px"}}>
+          <circle cx="100" cy="100" r="82" fill="none" stroke={g} strokeWidth=".5" opacity=".18"/>
+          {Array.from({length:24}).map((_,i)=>{
+            const a=i*Math.PI/12,r=82;
+            return <g key={i}><circle cx={100+r*Math.cos(a)} cy={100+r*Math.sin(a)} r={i%3===0?"2":"1"} fill={g} opacity={i%3===0?".3":".15"}/></g>;
+          })}
+        </g>
+        {/* third ring dashed */}
+        <g style={{animation:"spinSlow 40s linear infinite",transformOrigin:"100px 100px"}}>
+          <circle cx="100" cy="100" r="68" fill="none" stroke={g} strokeWidth=".5" opacity=".12" strokeDasharray="3 6"/>
+        </g>
+        {/* large lotus petals — outer */}
+        <g opacity=".9">
+          {Array.from({length:12}).map((_,i)=>(
+            <path key={i} d="M100 42 Q112 70 100 100 Q88 70 100 42" fill="none" stroke={g} strokeWidth="1"
+              transform={`rotate(${i*30} 100 100)`} opacity={.2+Math.sin(i*.5)*.15}/>
+          ))}
+        </g>
+        {/* medium lotus petals */}
+        <g opacity=".8">
+          {Array.from({length:8}).map((_,i)=>(
+            <path key={i} d="M100 55 Q110 77 100 100 Q90 77 100 55" fill={g} opacity=".06"
+              transform={`rotate(${i*45} 100 100)`}/>
+          ))}
+          {Array.from({length:8}).map((_,i)=>(
+            <path key={`s${i}`} d="M100 55 Q110 77 100 100 Q90 77 100 55" fill="none" stroke={g} strokeWidth=".8"
+              transform={`rotate(${i*45} 100 100)`} opacity=".35"/>
+          ))}
+        </g>
+        {/* inner small petals */}
+        <g opacity=".6">
+          {Array.from({length:8}).map((_,i)=>(
+            <path key={i} d="M100 68 Q107 84 100 100 Q93 84 100 68" fill={g} opacity=".08"
+              transform={`rotate(${i*45+22.5} 100 100)`}/>
+          ))}
+        </g>
+        {/* innermost ring */}
+        <circle cx="100" cy="100" r="22" fill="none" stroke={g} strokeWidth=".6" opacity=".25"/>
+        <circle cx="100" cy="100" r="15" fill="none" stroke={g} strokeWidth=".5" opacity=".2" strokeDasharray="2 4" style={{animation:"spinReverse 20s linear infinite",transformOrigin:"100px 100px"}}/>
+        {/* center jewel */}
+        <circle cx="100" cy="100" r="8" fill="none" stroke={g} strokeWidth="1" opacity=".5"/>
+        <circle cx="100" cy="100" r="4" fill={g} opacity=".6"/>
+        <circle cx="100" cy="100" r="1.5" fill="#fff" opacity=".5"/>
+        {/* breathing pulse */}
+        <circle cx="100" cy="100" r="28" fill="none" stroke={g} strokeWidth=".4" opacity=".15" style={{animation:"breathe 5s ease-in-out infinite"}}/>
+      </svg>
+    </div>
   );
+}
+
+/* ═══ ORNAMENTAL CATEGORY ICONS ═══ */
+function CatIcon({type,size=52,color=C.gold}){
+  const s=size,h=s/2,v=`0 0 ${s} ${s}`;
+  const icons={
+    /* wind/breath spiral */
+    breathing:(
+      <svg width={s} height={s} viewBox={v}>
+        <circle cx={h} cy={h} r={h-2} fill="none" stroke={color} strokeWidth=".7" opacity=".2"/>
+        <circle cx={h} cy={h} r={h-8} fill="none" stroke={color} strokeWidth=".5" opacity=".15" strokeDasharray="2 4"/>
+        <path d={`M${h} ${h-12} Q${h+10} ${h-4} ${h} ${h} Q${h-10} ${h+4} ${h} ${h+12}`} fill="none" stroke={color} strokeWidth="1.5" opacity=".6" strokeLinecap="round"/>
+        <path d={`M${h-8} ${h-6} Q${h} ${h-14} ${h+8} ${h-6}`} fill="none" stroke={color} strokeWidth="1" opacity=".35" strokeLinecap="round"/>
+        <path d={`M${h-8} ${h+6} Q${h} ${h+14} ${h+8} ${h+6}`} fill="none" stroke={color} strokeWidth="1" opacity=".35" strokeLinecap="round"/>
+        <circle cx={h} cy={h} r="2" fill={color} opacity=".5"/>
+      </svg>
+    ),
+    /* radiating figure */
+    bodyscan:(
+      <svg width={s} height={s} viewBox={v}>
+        <circle cx={h} cy={h} r={h-2} fill="none" stroke={color} strokeWidth=".7" opacity=".2"/>
+        {Array.from({length:8}).map((_,i)=>(
+          <line key={i} x1={h} y1={h} x2={h+Math.cos(i*Math.PI/4)*(h-6)} y2={h+Math.sin(i*Math.PI/4)*(h-6)} stroke={color} strokeWidth=".5" opacity=".15"/>
+        ))}
+        <circle cx={h} cy={h-8} r="4" fill="none" stroke={color} strokeWidth="1" opacity=".5"/>
+        <line x1={h} y1={h-4} x2={h} y2={h+10} stroke={color} strokeWidth="1.2" opacity=".5" strokeLinecap="round"/>
+        <line x1={h} y1={h+2} x2={h-7} y2={h+12} stroke={color} strokeWidth="1" opacity=".4" strokeLinecap="round"/>
+        <line x1={h} y1={h+2} x2={h+7} y2={h+12} stroke={color} strokeWidth="1" opacity=".4" strokeLinecap="round"/>
+        <line x1={h} y1={h-2} x2={h-8} y2={h+4} stroke={color} strokeWidth="1" opacity=".4" strokeLinecap="round"/>
+        <line x1={h} y1={h-2} x2={h+8} y2={h+4} stroke={color} strokeWidth="1" opacity=".4" strokeLinecap="round"/>
+        {Array.from({length:3}).map((_,i)=>(
+          <circle key={i} cx={h} cy={h} r={8+i*6} fill="none" stroke={color} strokeWidth=".4" opacity={.12-.02*i} strokeDasharray="1.5 3"/>
+        ))}
+      </svg>
+    ),
+    /* mountain landscape */
+    visual:(
+      <svg width={s} height={s} viewBox={v}>
+        <circle cx={h} cy={h} r={h-2} fill="none" stroke={color} strokeWidth=".7" opacity=".2"/>
+        <path d={`M${h-16} ${h+10} L${h-6} ${h-8} L${h+2} ${h+2} L${h+8} ${h-12} L${h+16} ${h+10}`} fill="none" stroke={color} strokeWidth="1.3" opacity=".55" strokeLinejoin="round" strokeLinecap="round"/>
+        <circle cx={h+10} cy={h-10} r="3" fill="none" stroke={color} strokeWidth=".8" opacity=".35"/>
+        <circle cx={h+10} cy={h-10} r="1" fill={color} opacity=".3"/>
+        <line x1={h-18} y1={h+10} x2={h+18} y2={h+10} stroke={color} strokeWidth=".6" opacity=".2"/>
+        {Array.from({length:5}).map((_,i)=>(
+          <circle key={i} cx={h-14+i*7} cy={h+14} r=".8" fill={color} opacity=".2"/>
+        ))}
+      </svg>
+    ),
+    /* heart mandala */
+    gratitude:(
+      <svg width={s} height={s} viewBox={v}>
+        <circle cx={h} cy={h} r={h-2} fill="none" stroke={color} strokeWidth=".7" opacity=".2"/>
+        <circle cx={h} cy={h} r={h-8} fill="none" stroke={color} strokeWidth=".4" opacity=".12" strokeDasharray="2 4"/>
+        <path d={`M${h} ${h+10} C${h-14} ${h} ${h-14} ${h-10} ${h} ${h-4} C${h+14} ${h-10} ${h+14} ${h} ${h} ${h+10}Z`} fill={color} opacity=".08"/>
+        <path d={`M${h} ${h+10} C${h-14} ${h} ${h-14} ${h-10} ${h} ${h-4} C${h+14} ${h-10} ${h+14} ${h} ${h} ${h+10}Z`} fill="none" stroke={color} strokeWidth="1.2" opacity=".5"/>
+        {Array.from({length:6}).map((_,i)=>(
+          <circle key={i} cx={h+12*Math.cos(i*Math.PI/3-Math.PI/6)} cy={h+12*Math.sin(i*Math.PI/3-Math.PI/6)} r="1" fill={color} opacity=".25"/>
+        ))}
+      </svg>
+    ),
+    /* crescent moon */
+    sleep:(
+      <svg width={s} height={s} viewBox={v}>
+        <circle cx={h} cy={h} r={h-2} fill="none" stroke={color} strokeWidth=".7" opacity=".2"/>
+        <path d={`M${h+2} ${h-14} A12 12 0 1 0 ${h+2} ${h+14} A9 9 0 1 1 ${h+2} ${h-14}Z`} fill={color} opacity=".08"/>
+        <path d={`M${h+2} ${h-14} A12 12 0 1 0 ${h+2} ${h+14} A9 9 0 1 1 ${h+2} ${h-14}Z`} fill="none" stroke={color} strokeWidth="1.2" opacity=".5"/>
+        <circle cx={h+10} cy={h-10} r="1" fill={color} opacity=".35"/>
+        <circle cx={h+14} cy={h-4} r=".7" fill={color} opacity=".25"/>
+        <circle cx={h+12} cy={h+6} r="1.2" fill={color} opacity=".3"/>
+        <circle cx={h} cy={h} r={h-8} fill="none" stroke={color} strokeWidth=".4" opacity=".1" strokeDasharray="1.5 3"/>
+      </svg>
+    ),
+    /* lotus / meditation circle */
+    meditation:(
+      <svg width={s} height={s} viewBox={v}>
+        <circle cx={h} cy={h} r={h-2} fill="none" stroke={color} strokeWidth=".7" opacity=".2"/>
+        {Array.from({length:6}).map((_,i)=>(
+          <path key={i} d={`M${h} ${h-10} Q${h+6} ${h-3} ${h} ${h+4} Q${h-6} ${h-3} ${h} ${h-10}`} fill="none" stroke={color} strokeWidth=".9"
+            transform={`rotate(${i*60} ${h} ${h})`} opacity=".4"/>
+        ))}
+        <circle cx={h} cy={h} r="3" fill={color} opacity=".15"/>
+        <circle cx={h} cy={h} r="1.5" fill={color} opacity=".4"/>
+      </svg>
+    ),
+    /* moon + stars for fairy tales */
+    tales:(
+      <svg width={s} height={s} viewBox={v}>
+        <circle cx={h} cy={h} r={h-2} fill="none" stroke={color} strokeWidth=".7" opacity=".2"/>
+        <path d={`M${h-2} ${h-12} A10 10 0 1 0 ${h-2} ${h+12} A7.5 7.5 0 1 1 ${h-2} ${h-12}Z`} fill="none" stroke={color} strokeWidth="1.1" opacity=".5"/>
+        <path d={`M${h-2} ${h-12} A10 10 0 1 0 ${h-2} ${h+12} A7.5 7.5 0 1 1 ${h-2} ${h-12}Z`} fill={color} opacity=".06"/>
+        {[{x:h+10,y:h-8,r:1.5},{x:h+14,y:h,r:1},{x:h+8,y:h+8,r:1.2},{x:h+13,y:h+6,r:.7}].map((s,i)=>(
+          <circle key={i} cx={s.x} cy={s.y} r={s.r} fill={color} opacity=".35"/>
+        ))}
+      </svg>
+    ),
+  };
+  return icons[type]||null;
 }
 
 /* ═══ PATTERNED BACKGROUND ═══ */
@@ -270,8 +388,8 @@ function App(){
 
         {/* ═══════ HOME ═══════ */}
         {view==="home"&&<>
-          <A><div style={{textAlign:"center",marginTop:48,marginBottom:24}}>
-            <Logo size={130}/>
+          <A><div style={{textAlign:"center",marginTop:32,marginBottom:16}}>
+            <Logo/>
           </div></A>
 
           <A i={1}><div style={{textAlign:"center",marginBottom:64}}>
@@ -287,8 +405,8 @@ function App(){
           {/* two main cards */}
           <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:24,maxWidth:760,margin:"0 auto"}}>
             {[
-              {k:"med",t:"Meditace",s:"Vedené meditace pro klid mysli a rovnováhu těla",icon:"◯",accent:C.gold,bg:"linear-gradient(155deg,#222018,#1C1A16)",bdr:C.gold},
-              {k:"tales",t:"Pohádky na dobrou noc",s:"Pro děti 2–4 roky · usínání s příběhem",icon:"☽",accent:C.forestLight,bg:"linear-gradient(155deg,#1A221C,#161C18)",bdr:C.forest},
+              {k:"med",t:"Meditace",s:"Vedené meditace pro klid mysli a rovnováhu těla",iconType:"meditation",accent:C.gold,bg:"linear-gradient(155deg,#222018,#1C1A16)",bdr:C.gold},
+              {k:"tales",t:"Pohádky na dobrou noc",s:"Pro děti 2–4 roky · usínání s příběhem",iconType:"tales",accent:C.forestLight,bg:"linear-gradient(155deg,#1A221C,#161C18)",bdr:C.forest},
             ].map((it,i)=>(
               <A key={it.k} i={i+2} d={.1}><button onClick={()=>go(it.k)} style={{width:"100%",background:it.bg,border:`1px solid ${it.bdr}20`,borderRadius:24,padding:"48px 36px",cursor:"pointer",textAlign:"center",transition:"all .4s cubic-bezier(.16,1,.3,1)",position:"relative",overflow:"hidden",minHeight:260,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}
                 onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-6px)";e.currentTarget.style.borderColor=it.bdr+"50";e.currentTarget.style.boxShadow=`0 24px 60px ${it.bdr}12`;}}
@@ -298,7 +416,7 @@ function App(){
                 <div style={{position:"absolute",top:16,right:16,width:24,height:24,borderTop:`1px solid ${it.accent}30`,borderRight:`1px solid ${it.accent}30`}}/>
                 <div style={{position:"absolute",bottom:16,left:16,width:24,height:24,borderBottom:`1px solid ${it.accent}30`,borderLeft:`1px solid ${it.accent}30`}}/>
                 <div style={{position:"absolute",bottom:16,right:16,width:24,height:24,borderBottom:`1px solid ${it.accent}30`,borderRight:`1px solid ${it.accent}30`}}/>
-                <span style={{fontFamily:"'Cormorant',serif",fontSize:56,color:it.accent,display:"block",marginBottom:20,fontStyle:"italic",opacity:.6}}>{it.icon}</span>
+                <div style={{marginBottom:16,opacity:.85}}><CatIcon type={it.iconType} size={64} color={it.accent}/></div>
                 <div style={{fontFamily:"'Cormorant',serif",fontSize:28,fontWeight:400,fontStyle:"italic",marginBottom:10,color:C.cream,letterSpacing:".02em"}}>{it.t}</div>
                 <div style={{fontSize:14,color:C.creamDim,fontWeight:400,lineHeight:1.6,maxWidth:260}}>{it.s}</div>
                 <div style={{marginTop:28,display:"inline-flex",alignItems:"center",gap:8,border:`1px solid ${it.accent}40`,padding:"10px 28px",borderRadius:30,fontSize:12,fontWeight:600,color:it.accent,letterSpacing:".08em",textTransform:"uppercase",transition:"all .2s"}}
@@ -316,12 +434,12 @@ function App(){
 
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:24,marginBottom:48}}>
               {[
-                {icon:"◯",t:"Proč meditace?",txt:"Meditace nás vrací k přítomnosti. Pomáhá ztišit mysl, uvolnit napětí v těle a znovu najít kontakt sám se sebou. Stačí pár minut vědomého dechu. Naše nahrávky vás provedou technikami dýchání, skenování těla, vizualizace i vděčnosti.",bg:"linear-gradient(155deg,#222018,#1C1A16)",accent:C.gold},
-                {icon:"☽",t:"Proč pohádky?",txt:"Malé děti ještě neumí meditovat, ale umí naslouchat. Pohádka před spaním je pro ně bezpečný prostor, kde se vše zpomalí. Klidný hlas a rytmus vyprávění pomáhají dítěti uvolnit se, zpracovat den a pokojně usnout.",bg:"linear-gradient(155deg,#1A221C,#161C18)",accent:C.forestLight},
+                {iconType:"meditation",t:"Proč meditace?",txt:"Meditace nás vrací k přítomnosti. Pomáhá ztišit mysl, uvolnit napětí v těle a znovu najít kontakt sám se sebou. Stačí pár minut vědomého dechu. Naše nahrávky vás provedou technikami dýchání, skenování těla, vizualizace i vděčnosti.",bg:"linear-gradient(155deg,#222018,#1C1A16)",accent:C.gold},
+                {iconType:"tales",t:"Proč pohádky?",txt:"Malé děti ještě neumí meditovat, ale umí naslouchat. Pohádka před spaním je pro ně bezpečný prostor, kde se vše zpomalí. Klidný hlas a rytmus vyprávění pomáhají dítěti uvolnit se, zpracovat den a pokojně usnout.",bg:"linear-gradient(155deg,#1A221C,#161C18)",accent:C.forestLight},
               ].map((b,i)=>(
                 <div key={i} style={{background:b.bg,borderRadius:22,padding:"36px 32px",border:`1px solid ${b.accent}18`,position:"relative",overflow:"hidden"}}>
                   <div style={{position:"absolute",top:14,right:14,width:20,height:20,borderTop:`1px solid ${b.accent}20`,borderRight:`1px solid ${b.accent}20`}}/>
-                  <span style={{fontFamily:"'Cormorant',serif",fontSize:36,color:b.accent,display:"block",marginBottom:14,fontStyle:"italic",opacity:.5}}>{b.icon}</span>
+                  <div style={{marginBottom:14,opacity:.7}}><CatIcon type={b.iconType} size={44} color={b.accent}/></div>
                   <h3 style={{fontFamily:"'Cormorant',serif",fontSize:22,fontWeight:400,fontStyle:"italic",color:C.cream,marginBottom:14}}>{b.t}</h3>
                   <p style={{fontSize:14,lineHeight:1.9,color:C.creamDim}}>{b.txt}</p>
                 </div>
@@ -330,9 +448,9 @@ function App(){
 
             <div style={{background:C.bg2,borderRadius:22,padding:"40px 36px",border:`1px solid ${C.border}`,textAlign:"center"}}>
               <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14,marginBottom:18}}>
-                <span style={{fontFamily:"'Cormorant',serif",fontSize:24,color:C.gold,fontStyle:"italic",opacity:.5}}>◯</span>
+                <div style={{opacity:.6}}><CatIcon type="meditation" size={36} color={C.gold}/></div>
                 <Divider width={60}/>
-                <span style={{fontFamily:"'Cormorant',serif",fontSize:24,color:C.forestLight,fontStyle:"italic",opacity:.5}}>☽</span>
+                <div style={{opacity:.6}}><CatIcon type="tales" size={36} color={C.forestLight}/></div>
               </div>
               <h3 style={{fontFamily:"'Cormorant',serif",fontSize:"clamp(20px,3vw,28px)",fontWeight:400,fontStyle:"italic",color:C.cream,marginBottom:16}}>Co meditaci a pohádky spojuje?</h3>
               <p style={{fontSize:14,lineHeight:2,color:C.creamDim,maxWidth:520,margin:"0 auto"}}>
@@ -358,7 +476,7 @@ function App(){
                 onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.borderColor=c.accent+"18";e.currentTarget.style.boxShadow="";}}>
                 <div style={{position:"absolute",top:12,right:12,width:16,height:16,borderTop:`1px solid ${c.color}20`,borderRight:`1px solid ${c.color}20`}}/>
                 <div style={{position:"absolute",bottom:12,left:12,width:16,height:16,borderBottom:`1px solid ${c.color}20`,borderLeft:`1px solid ${c.color}20`}}/>
-                <span style={{fontSize:38,marginBottom:14}}>{c.icon}</span>
+                <div style={{marginBottom:10,opacity:.85}}><CatIcon type={c.id} size={48} color={c.color}/></div>
                 <div style={{fontFamily:"'Cormorant',serif",fontSize:20,fontWeight:400,fontStyle:"italic",color:C.cream,marginBottom:4}}>{c.title}</div>
                 <div style={{fontSize:13,color:C.creamDim,fontWeight:400}}>{c.subtitle}</div>
                 <div style={{marginTop:14,fontSize:10,color:c.color,fontWeight:600,letterSpacing:".08em",textTransform:"uppercase"}}>{c.sessions.length} nahrávky</div>
@@ -370,7 +488,7 @@ function App(){
         {/* ═══════ MEDITATION SESSIONS ═══════ */}
         {view==="ms"&&cat&&<>
           <A><div style={{textAlign:"center",marginBottom:40}}>
-            <span style={{fontSize:48,display:"block",marginBottom:14}}>{cat.icon}</span>
+            <div style={{margin:"0 auto 14px",opacity:.85}}><CatIcon type={cat.id} size={64} color={cat.color}/></div>
             <h2 style={{fontFamily:"'Cormorant',serif",fontSize:"clamp(30px,5vw,46px)",fontWeight:300,fontStyle:"italic",margin:0,color:C.cream}}>{cat.title}</h2>
             <p style={{color:C.creamDim,fontSize:14,marginTop:8}}>{cat.subtitle}</p>
             <div style={{marginTop:16}}><Divider width={100}/></div>

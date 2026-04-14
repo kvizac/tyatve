@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Ty a Tvé – Meditace & Pohádky</title>
 <meta name="description" content="Prostor pro vnitřní klid. Meditace pro dospělé, pohádky pro nejmenší." />
+<meta property="og:title" content="Ty a Tvé – Meditace & Pohádky" />
+<meta property="og:description" content="Prostor pro vnitřní klid. Meditace pro dospělé, pohádky pro nejmenší." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -14,12 +17,11 @@ html { scroll-behavior: smooth; }
 body { background: #FDF6EE; color: #2D2A26; font-family: 'Quicksand', sans-serif; overflow-x: hidden; }
 #root { min-height: 100vh; }
 
-@keyframes fadeUp { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
-@keyframes slideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
-@keyframes popIn { from { opacity:0; transform:scale(.9) translateY(14px); } to { opacity:1; transform:scale(1) translateY(0); } }
-@keyframes floatSlow { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-20px) rotate(3deg)} }
-@keyframes floatSlow2 { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-16px) rotate(-2deg)} }
-@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+@keyframes popIn { from{opacity:0;transform:scale(.9) translateY(14px)} to{opacity:1;transform:scale(1) translateY(0)} }
+@keyframes floatA { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-20px) rotate(3deg)} }
+@keyframes floatB { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-16px) rotate(-2deg)} }
 @keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
 @keyframes modalBg { from{opacity:0} to{opacity:1} }
 </style>
@@ -33,95 +35,87 @@ body { background: #FDF6EE; color: #2D2A26; font-family: 'Quicksand', sans-serif
 const {useState,useEffect,useRef}=React;
 
 /* ═══ PALETTE ═══ */
-const P = {
-  cream: "#FDF6EE",
-  peach: "#F4A989",
-  coral: "#E07A6B",
-  sage: "#8DB48E",
-  lavender: "#B8A9D4",
-  sky: "#89B8CF",
-  gold: "#D4B563",
-  blush: "#E8C4C0",
-  deep: "#2D2A26",
-  muted: "#7A756E",
-};
+const P={cream:"#FDF6EE",peach:"#F4A989",coral:"#E07A6B",sage:"#8DB48E",lavender:"#B8A9D4",sky:"#89B8CF",gold:"#D4B563",blush:"#E8C4C0",deep:"#2D2A26",muted:"#7A756E"};
 
-/* ═══ DATA ═══ */
-const CATEGORIES = [
-  { id:"breathing",title:"Dýchání",subtitle:"Návrat k dechu",icon:"🌬️",color:P.peach,
-    sessions:[
-      {id:1,title:"Ranní probuzení",duration:"8 min",desc:"Jemné dechové cvičení pro start dne",src:"audio/ranni-probuzeni.mp3"},
-      {id:2,title:"Box breathing",duration:"5 min",desc:"Čtvercové dýchání pro okamžitý klid",src:"audio/box-breathing.mp3"},
-      {id:3,title:"Večerní uvolnění",duration:"12 min",desc:"Hluboký dech před spaním",src:"audio/vecerni-uvolneni.mp3"},
-    ]},
-  { id:"bodyscan",title:"Body Scan",subtitle:"Cesta tělem",icon:"✨",color:P.sage,
-    sessions:[
-      {id:4,title:"Rychlý scan",duration:"6 min",desc:"Pozorností skrz celé tělo"},
-      {id:5,title:"Hluboké uvolnění",duration:"20 min",desc:"Uvolnění každého svalu"},
-      {id:6,title:"Jóga nidra",duration:"30 min",desc:"Jogínský spánek – regenerace"},
-    ]},
-  { id:"visual",title:"Vizualizace",subtitle:"Vnitřní krajiny",icon:"🏔️",color:P.lavender,
-    sessions:[
-      {id:7,title:"Procházka lesem",duration:"15 min",desc:"Cesta tichým lesem"},
-      {id:8,title:"U moře",duration:"12 min",desc:"Zvuk vln a slaný vzduch"},
-      {id:9,title:"Horský pramen",duration:"10 min",desc:"Čistá voda a ticho hor"},
-    ]},
-  { id:"gratitude",title:"Vděčnost",subtitle:"Otevřené srdce",icon:"💛",color:P.gold,
-    sessions:[
-      {id:10,title:"Tři dobré věci",duration:"7 min",desc:"Co dobrého máme"},
-      {id:11,title:"Laskavost k sobě",duration:"10 min",desc:"Mettá meditace"},
-      {id:12,title:"Propojení",duration:"12 min",desc:"Sounáležitost se světem"},
-    ]},
-  { id:"sleep",title:"Usínání",subtitle:"Ke spánku",icon:"🌙",color:P.sky,
-    sessions:[
-      {id:13,title:"Počítání hvězd",duration:"15 min",desc:"Jemné vedení do spánku"},
-      {id:14,title:"Těžké tělo",duration:"20 min",desc:"Propadání do matrace"},
-      {id:15,title:"Noční déšť",duration:"25 min",desc:"Zvuky deště a tichý hlas"},
-    ]},
+/* ═══ DATA – audio cesty odpovídají složkám v /audio/ ═══ */
+const CATEGORIES=[
+  {id:"breathing",title:"Dýchání",subtitle:"Návrat k dechu",icon:"🌬️",color:P.peach,sessions:[
+    {id:1,title:"Ranní probuzení",duration:"8 min",desc:"Jemné dechové cvičení pro start dne",src:"audio/meditace/dychani/ranni-probuzeni.mp3"},
+    {id:2,title:"Box breathing",duration:"5 min",desc:"Čtvercové dýchání pro okamžitý klid",src:"audio/meditace/dychani/box-breathing.mp3"},
+    {id:3,title:"Večerní uvolnění",duration:"12 min",desc:"Hluboký dech před spaním",src:"audio/meditace/dychani/vecerni-uvolneni.mp3"},
+  ]},
+  {id:"bodyscan",title:"Body Scan",subtitle:"Cesta tělem",icon:"✨",color:P.sage,sessions:[
+    {id:4,title:"Rychlý scan",duration:"6 min",desc:"Pozorností skrz celé tělo",src:"audio/meditace/body-scan/rychly-scan.mp3"},
+    {id:5,title:"Hluboké uvolnění",duration:"20 min",desc:"Uvolnění každého svalu",src:"audio/meditace/body-scan/hluboke-uvolneni.mp3"},
+    {id:6,title:"Jóga nidra",duration:"30 min",desc:"Jogínský spánek – regenerace",src:"audio/meditace/body-scan/joga-nidra.mp3"},
+  ]},
+  {id:"visual",title:"Vizualizace",subtitle:"Vnitřní krajiny",icon:"🏔️",color:P.lavender,sessions:[
+    {id:7,title:"Procházka lesem",duration:"15 min",desc:"Cesta tichým lesem",src:"audio/meditace/vizualizace/prochazka-lesem.mp3"},
+    {id:8,title:"U moře",duration:"12 min",desc:"Zvuk vln a slaný vzduch",src:"audio/meditace/vizualizace/u-more.mp3"},
+    {id:9,title:"Horský pramen",duration:"10 min",desc:"Čistá voda a ticho hor",src:"audio/meditace/vizualizace/horsky-pramen.mp3"},
+  ]},
+  {id:"gratitude",title:"Vděčnost",subtitle:"Otevřené srdce",icon:"💛",color:P.gold,sessions:[
+    {id:10,title:"Tři dobré věci",duration:"7 min",desc:"Co dobrého máme",src:"audio/meditace/vdecnost/tri-dobre-veci.mp3"},
+    {id:11,title:"Laskavost k sobě",duration:"10 min",desc:"Mettá meditace",src:"audio/meditace/vdecnost/laskavost-k-sobe.mp3"},
+    {id:12,title:"Propojení",duration:"12 min",desc:"Sounáležitost se světem",src:"audio/meditace/vdecnost/propojeni.mp3"},
+  ]},
+  {id:"sleep",title:"Usínání",subtitle:"Ke spánku",icon:"🌙",color:P.sky,sessions:[
+    {id:13,title:"Počítání hvězd",duration:"15 min",desc:"Jemné vedení do spánku",src:"audio/meditace/usinani/pocitani-hvezd.mp3"},
+    {id:14,title:"Těžké tělo",duration:"20 min",desc:"Propadání do matrace",src:"audio/meditace/usinani/tezke-telo.mp3"},
+    {id:15,title:"Noční déšť",duration:"25 min",desc:"Zvuky deště a tichý hlas",src:"audio/meditace/usinani/nocni-dest.mp3"},
+  ]},
 ];
 
 const TALES={
-  2:[{id:101,title:"O řepě",duration:"4 min",icon:"🌱"},{id:102,title:"O kohoutkovi a slepičce",duration:"5 min",icon:"🐓"},{id:103,title:"O kočičce a pejskovi",duration:"5 min",icon:"🐱"},{id:104,title:"Jak šlo vajíčko na vandr",duration:"4 min",icon:"🥚"}],
-  3:[{id:201,title:"O třech medvědech",duration:"7 min",icon:"🐻"},{id:202,title:"O zlaté rybce",duration:"8 min",icon:"🐟"},{id:203,title:"Palečka",duration:"6 min",icon:"👧"},{id:204,title:"O perníkové chaloupce",duration:"9 min",icon:"🏠"},{id:205,title:"O veliké repě",duration:"6 min",icon:"🥕"}],
-  4:[{id:301,title:"Jak šel Honzík do světa",duration:"12 min",icon:"🌍"},{id:302,title:"Zvířátka a loupežníci",duration:"11 min",icon:"🎵"},{id:303,title:"O Smolíčkovi",duration:"10 min",icon:"🦌"},{id:304,title:"Budulínek",duration:"9 min",icon:"🏡"},{id:305,title:"O neposlušných kůzlátkách",duration:"8 min",icon:"🐐"},{id:306,title:"O červené Karkulce",duration:"10 min",icon:"🧣"}],
+  2:[
+    {id:101,title:"O řepě",duration:"4 min",icon:"🌱",src:"audio/pohadky/2roky/o-repe.mp3"},
+    {id:102,title:"O kohoutkovi a slepičce",duration:"5 min",icon:"🐓",src:"audio/pohadky/2roky/o-kohoutkovi-a-slepicce.mp3"},
+    {id:103,title:"O kočičce a pejskovi",duration:"5 min",icon:"🐱",src:"audio/pohadky/2roky/o-kocicce-a-pejskovi.mp3"},
+    {id:104,title:"Jak šlo vajíčko na vandr",duration:"4 min",icon:"🥚",src:"audio/pohadky/2roky/jak-slo-vajicko-na-vandr.mp3"},
+  ],
+  3:[
+    {id:201,title:"O třech medvědech",duration:"7 min",icon:"🐻",src:"audio/pohadky/3roky/o-trech-medvedech.mp3"},
+    {id:202,title:"O zlaté rybce",duration:"8 min",icon:"🐟",src:"audio/pohadky/3roky/o-zlate-rybce.mp3"},
+    {id:203,title:"Palečka",duration:"6 min",icon:"👧",src:"audio/pohadky/3roky/palecka.mp3"},
+    {id:204,title:"O perníkové chaloupce",duration:"9 min",icon:"🏠",src:"audio/pohadky/3roky/o-pernikove-chaloupce.mp3"},
+    {id:205,title:"O veliké repě",duration:"6 min",icon:"🥕",src:"audio/pohadky/3roky/o-velike-repe.mp3"},
+  ],
+  4:[
+    {id:301,title:"Jak šel Honzík do světa",duration:"12 min",icon:"🌍",src:"audio/pohadky/4roky/jak-sel-honzik-do-sveta.mp3"},
+    {id:302,title:"Zvířátka a loupežníci",duration:"11 min",icon:"🎵",src:"audio/pohadky/4roky/zviratka-a-loupeznici.mp3"},
+    {id:303,title:"O Smolíčkovi",duration:"10 min",icon:"🦌",src:"audio/pohadky/4roky/o-smolickovi.mp3"},
+    {id:304,title:"Budulínek",duration:"9 min",icon:"🏡",src:"audio/pohadky/4roky/budulink.mp3"},
+    {id:305,title:"O neposlušných kůzlátkách",duration:"8 min",icon:"🐐",src:"audio/pohadky/4roky/o-neposlusnych-kuzlatkach.mp3"},
+    {id:306,title:"O červené Karkulce",duration:"10 min",icon:"🧣",src:"audio/pohadky/4roky/o-cervene-karkulce.mp3"},
+  ],
 };
 
-/* ═══ ANIM WRAPPER ═══ */
+/* ═══ ANIMATION WRAPPER ═══ */
 function A({children,i=0,d=0}){return <div style={{animation:`fadeUp .65s cubic-bezier(.16,1,.3,1) ${d+i*0.07}s both`}}>{children}</div>;}
 
-/* ═══ ABSTRACT BG ═══ */
+/* ═══ ABSTRACT BACKGROUND ═══ */
 function AbstractBg(){
   return (
     <div style={{position:"fixed",inset:0,zIndex:0,pointerEvents:"none",overflow:"hidden"}}>
-      {/* warm gradient base */}
-      <div style={{position:"absolute",inset:0,background:"linear-gradient(170deg, #FDF6EE 0%, #F9EDE0 25%, #FDF6EE 50%, #F0E8F5 75%, #FDF6EE 100%)"}} />
-      {/* large decorative circles */}
-      <svg style={{position:"absolute",top:"-15%",right:"-10%",width:"55vw",height:"55vw",maxWidth:700,maxHeight:700,animation:"floatSlow 18s ease-in-out infinite"}} viewBox="0 0 400 400">
-        <circle cx="200" cy="200" r="195" fill="none" stroke={P.peach} strokeWidth="1.5" opacity="0.25" />
-        <circle cx="200" cy="200" r="150" fill="none" stroke={P.coral} strokeWidth="1" opacity="0.15" />
-        <circle cx="200" cy="200" r="100" fill={P.peach} opacity="0.06" />
+      <div style={{position:"absolute",inset:0,background:"linear-gradient(170deg,#FDF6EE 0%,#F9EDE0 25%,#FDF6EE 50%,#F0E8F5 75%,#FDF6EE 100%)"}} />
+      {/* large circles */}
+      <svg style={{position:"absolute",top:"-15%",right:"-10%",width:"55vw",height:"55vw",maxWidth:700,maxHeight:700,animation:"floatA 18s ease-in-out infinite"}} viewBox="0 0 400 400">
+        <circle cx="200" cy="200" r="195" fill="none" stroke={P.peach} strokeWidth="1.5" opacity=".25"/><circle cx="200" cy="200" r="150" fill="none" stroke={P.coral} strokeWidth="1" opacity=".15"/><circle cx="200" cy="200" r="100" fill={P.peach} opacity=".06"/>
       </svg>
-      <svg style={{position:"absolute",bottom:"-10%",left:"-8%",width:"45vw",height:"45vw",maxWidth:550,maxHeight:550,animation:"floatSlow2 22s ease-in-out infinite"}} viewBox="0 0 400 400">
-        <circle cx="200" cy="200" r="190" fill="none" stroke={P.sage} strokeWidth="1.5" opacity="0.2" />
-        <circle cx="200" cy="200" r="140" fill="none" stroke={P.sage} strokeWidth="1" opacity="0.12" />
-        <circle cx="200" cy="200" r="85" fill={P.sage} opacity="0.05" />
+      <svg style={{position:"absolute",bottom:"-10%",left:"-8%",width:"45vw",height:"45vw",maxWidth:550,maxHeight:550,animation:"floatB 22s ease-in-out infinite"}} viewBox="0 0 400 400">
+        <circle cx="200" cy="200" r="190" fill="none" stroke={P.sage} strokeWidth="1.5" opacity=".2"/><circle cx="200" cy="200" r="140" fill="none" stroke={P.sage} strokeWidth="1" opacity=".12"/><circle cx="200" cy="200" r="85" fill={P.sage} opacity=".05"/>
       </svg>
-      <svg style={{position:"absolute",top:"35%",left:"50%",transform:"translateX(-50%)",width:"60vw",height:"60vw",maxWidth:800,maxHeight:800,animation:"floatSlow 25s ease-in-out infinite",animationDelay:"-8s"}} viewBox="0 0 400 400">
-        <circle cx="200" cy="200" r="198" fill="none" stroke={P.lavender} strokeWidth="1" opacity="0.15" />
-        <circle cx="200" cy="200" r="160" fill="none" stroke={P.blush} strokeWidth="0.8" opacity="0.1" />
+      <svg style={{position:"absolute",top:"35%",left:"50%",transform:"translateX(-50%)",width:"60vw",height:"60vw",maxWidth:800,maxHeight:800,animation:"floatA 25s ease-in-out infinite",animationDelay:"-8s"}} viewBox="0 0 400 400">
+        <circle cx="200" cy="200" r="198" fill="none" stroke={P.lavender} strokeWidth="1" opacity=".15"/><circle cx="200" cy="200" r="160" fill="none" stroke={P.blush} strokeWidth=".8" opacity=".1"/>
       </svg>
-      {/* small accent dots */}
-      <div style={{position:"absolute",top:"18%",left:"12%",width:12,height:12,borderRadius:"50%",background:P.gold,opacity:0.25,animation:"floatSlow 6s ease-in-out infinite"}} />
-      <div style={{position:"absolute",top:"72%",right:"15%",width:8,height:8,borderRadius:"50%",background:P.coral,opacity:0.2,animation:"floatSlow2 8s ease-in-out infinite"}} />
-      <div style={{position:"absolute",top:"45%",left:"8%",width:6,height:6,borderRadius:"50%",background:P.lavender,opacity:0.3,animation:"floatSlow 7s ease-in-out infinite",animationDelay:"-3s"}} />
-      <div style={{position:"absolute",top:"28%",right:"22%",width:10,height:10,borderRadius:"50%",background:P.sage,opacity:0.2,animation:"floatSlow2 9s ease-in-out infinite",animationDelay:"-4s"}} />
-      {/* subtle arc shapes */}
-      <svg style={{position:"absolute",top:"8%",left:"25%",width:200,opacity:0.12,animation:"floatSlow 14s ease-in-out infinite",animationDelay:"-5s"}} viewBox="0 0 200 100">
-        <path d="M10 90 Q100 -10 190 90" fill="none" stroke={P.sky} strokeWidth="2" />
-      </svg>
-      <svg style={{position:"absolute",bottom:"15%",right:"20%",width:160,opacity:0.1,animation:"floatSlow2 16s ease-in-out infinite",animationDelay:"-7s"}} viewBox="0 0 200 100">
-        <path d="M10 10 Q100 110 190 10" fill="none" stroke={P.gold} strokeWidth="2" />
-      </svg>
+      {/* dots */}
+      <div style={{position:"absolute",top:"18%",left:"12%",width:12,height:12,borderRadius:"50%",background:P.gold,opacity:.25,animation:"floatA 6s ease-in-out infinite"}}/>
+      <div style={{position:"absolute",top:"72%",right:"15%",width:8,height:8,borderRadius:"50%",background:P.coral,opacity:.2,animation:"floatB 8s ease-in-out infinite"}}/>
+      <div style={{position:"absolute",top:"45%",left:"8%",width:6,height:6,borderRadius:"50%",background:P.lavender,opacity:.3,animation:"floatA 7s ease-in-out infinite",animationDelay:"-3s"}}/>
+      <div style={{position:"absolute",top:"28%",right:"22%",width:10,height:10,borderRadius:"50%",background:P.sage,opacity:.2,animation:"floatB 9s ease-in-out infinite",animationDelay:"-4s"}}/>
+      {/* arcs */}
+      <svg style={{position:"absolute",top:"8%",left:"25%",width:200,opacity:.12,animation:"floatA 14s ease-in-out infinite",animationDelay:"-5s"}} viewBox="0 0 200 100"><path d="M10 90 Q100 -10 190 90" fill="none" stroke={P.sky} strokeWidth="2"/></svg>
+      <svg style={{position:"absolute",bottom:"15%",right:"20%",width:160,opacity:.1,animation:"floatB 16s ease-in-out infinite",animationDelay:"-7s"}} viewBox="0 0 200 100"><path d="M10 10 Q100 110 190 10" fill="none" stroke={P.gold} strokeWidth="2"/></svg>
     </div>
   );
 }
@@ -129,19 +123,17 @@ function AbstractBg(){
 /* ═══ DOWNLOAD BUTTON ═══ */
 function DlBtn({onClick}){
   const [h,setH]=useState(false);
-  return (
-    <button onClick={e=>{e.stopPropagation();onClick();}} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
-      style={{background:h?"linear-gradient(135deg,"+P.peach+","+P.coral+")":"#fff",border:"1.5px solid "+(h?"transparent":P.blush),borderRadius:12,padding:"8px 18px",color:h?"#fff":P.coral,fontSize:13,fontFamily:"'Quicksand',sans-serif",fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:6,flexShrink:0,transition:"all .25s",transform:h?"scale(1.06)":"",boxShadow:h?"0 6px 20px rgba(224,122,107,0.3)":"0 2px 8px rgba(0,0,0,0.04)"}}>
-      ⬇ 29 Kč
-    </button>
-  );
+  return <button onClick={e=>{e.stopPropagation();onClick();}} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+    style={{background:h?`linear-gradient(135deg,${P.peach},${P.coral})`:"#fff",border:`1.5px solid ${h?"transparent":P.blush}`,borderRadius:12,padding:"8px 18px",color:h?"#fff":P.coral,fontSize:13,fontFamily:"'Quicksand',sans-serif",fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:6,flexShrink:0,transition:"all .25s",transform:h?"scale(1.06)":"",boxShadow:h?"0 6px 20px rgba(224,122,107,.3)":"0 2px 8px rgba(0,0,0,.04)"}}>
+    ⬇ 29 Kč
+  </button>;
 }
 
 /* ═══ MODAL ═══ */
 function Modal({item,onClose}){
   return (
-    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(45,42,38,0.4)",backdropFilter:"blur(12px)",zIndex:300,display:"flex",alignItems:"center",justifyContent:"center",padding:24,animation:"modalBg .2s ease"}}>
-      <div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:28,padding:"48px 40px",maxWidth:400,width:"100%",animation:"popIn .35s cubic-bezier(.16,1,.3,1)",textAlign:"center",boxShadow:"0 32px 80px rgba(0,0,0,0.12)"}}>
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(45,42,38,.4)",backdropFilter:"blur(12px)",zIndex:300,display:"flex",alignItems:"center",justifyContent:"center",padding:24,animation:"modalBg .2s ease"}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"#fff",borderRadius:28,padding:"48px 40px",maxWidth:400,width:"100%",animation:"popIn .35s cubic-bezier(.16,1,.3,1)",textAlign:"center",boxShadow:"0 32px 80px rgba(0,0,0,.12)"}}>
         <div style={{fontSize:60,marginBottom:16}}>{item.icon}</div>
         <h3 style={{fontFamily:"'DM Serif Display',serif",fontSize:24,fontWeight:400,marginBottom:6,color:P.deep}}>{item.title}</h3>
         <p style={{color:P.muted,fontSize:14,marginBottom:28}}>Stáhněte si nahrávku pro offline poslech</p>
@@ -149,11 +141,11 @@ function Modal({item,onClose}){
           <span style={{color:P.muted,fontSize:15}}>Jednorázově</span>
           <span style={{fontSize:28,fontWeight:700,fontFamily:"'DM Serif Display',serif",color:P.coral}}>29 Kč</span>
         </div>
-        <button style={{width:"100%",padding:"16px 0",borderRadius:16,background:"linear-gradient(135deg,"+P.peach+","+P.coral+")",border:"none",color:"#fff",fontSize:16,fontWeight:700,fontFamily:"'Quicksand',sans-serif",cursor:"pointer",marginBottom:14,transition:"transform .15s",boxShadow:"0 8px 24px rgba(224,122,107,0.3)",letterSpacing:"0.02em"}}
+        <button style={{width:"100%",padding:"16px 0",borderRadius:16,background:`linear-gradient(135deg,${P.peach},${P.coral})`,border:"none",color:"#fff",fontSize:16,fontWeight:700,fontFamily:"'Quicksand',sans-serif",cursor:"pointer",marginBottom:14,transition:"transform .15s",boxShadow:"0 8px 24px rgba(224,122,107,.3)"}}
           onMouseEnter={e=>e.currentTarget.style.transform="scale(1.02)"} onMouseLeave={e=>e.currentTarget.style.transform=""}>
           Zakoupit a stáhnout
         </button>
-        <button onClick={onClose} style={{background:"none",border:"none",color:P.muted,fontSize:14,cursor:"pointer",fontFamily:"'Quicksand',sans-serif",fontWeight:600}}>Zrušit</button>
+        <button onClick={onClose} style={{background:"none",border:"none",color:P.muted,fontSize:14,cursor:"pointer",fontWeight:600}}>Zrušit</button>
       </div>
     </div>
   );
@@ -166,21 +158,21 @@ function Player({session,onClose}){
   const aRef=useRef(null);
 
   useEffect(()=>{const a=aRef.current;if(!a)return;const t=()=>{if(a.duration)setProg((a.currentTime/a.duration)*100);};const e=()=>{setOn(false);setProg(0);};a.addEventListener("timeupdate",t);a.addEventListener("ended",e);return()=>{a.removeEventListener("timeupdate",t);a.removeEventListener("ended",e);};},[session]);
-  const toggle=()=>{const a=aRef.current;if(a){if(on)a.pause();else a.play().catch(()=>{});setOn(!on);return;}setOn(!on);};
+  const toggle=()=>{const a=aRef.current;if(a&&a.src){if(on)a.pause();else a.play().catch(()=>{});setOn(!on);return;}setOn(!on);};
   const seek=e=>{const a=aRef.current;if(!a||!a.duration)return;const r=e.currentTarget.getBoundingClientRect();a.currentTime=((e.clientX-r.left)/r.width)*a.duration;};
   useEffect(()=>{if(session.src||!on)return;const iv=setInterval(()=>setProg(p=>p>=100?(setOn(false),0):p+0.25),120);return()=>clearInterval(iv);},[on,session.src]);
 
   return (
-    <div style={{position:"fixed",bottom:0,left:0,right:0,background:"rgba(255,255,255,0.92)",backdropFilter:"blur(20px)",padding:"16px 28px",display:"flex",alignItems:"center",gap:16,zIndex:200,borderTop:"1.5px solid "+P.blush,animation:"slideUp .35s cubic-bezier(.16,1,.3,1)",boxShadow:"0 -8px 32px rgba(0,0,0,0.06)"}}>
-      {session.src && <audio ref={aRef} src={session.src} preload="auto" />}
-      <button onClick={toggle} style={{width:52,height:52,borderRadius:"50%",border:"none",background:"linear-gradient(135deg,"+P.peach+","+P.coral+")",color:"#fff",fontSize:18,fontWeight:900,cursor:"pointer",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"transform .15s",boxShadow:"0 6px 20px rgba(224,122,107,0.3)"}}
+    <div style={{position:"fixed",bottom:0,left:0,right:0,background:"rgba(255,255,255,.92)",backdropFilter:"blur(20px)",padding:"16px 28px",display:"flex",alignItems:"center",gap:16,zIndex:200,borderTop:`1.5px solid ${P.blush}`,animation:"slideUp .35s cubic-bezier(.16,1,.3,1)",boxShadow:"0 -8px 32px rgba(0,0,0,.06)"}}>
+      {session.src&&<audio ref={aRef} src={session.src} preload="auto"/>}
+      <button onClick={toggle} style={{width:52,height:52,borderRadius:"50%",border:"none",background:`linear-gradient(135deg,${P.peach},${P.coral})`,color:"#fff",fontSize:18,fontWeight:900,cursor:"pointer",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",transition:"transform .15s",boxShadow:"0 6px 20px rgba(224,122,107,.3)"}}
         onMouseEnter={e=>e.currentTarget.style.transform="scale(1.08)"} onMouseLeave={e=>e.currentTarget.style.transform=""}>
         {on?"⏸":"▶"}
       </button>
       <div style={{flex:1,minWidth:0}}>
         <div style={{color:P.deep,fontSize:15,fontWeight:700,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{session.title}</div>
         <div onClick={seek} style={{marginTop:8,height:5,background:P.blush,borderRadius:4,cursor:"pointer",overflow:"hidden"}}>
-          <div style={{width:`${prog}%`,height:"100%",background:"linear-gradient(90deg,"+P.peach+","+P.coral+")",borderRadius:4,transition:"width .12s linear"}} />
+          <div style={{width:`${prog}%`,height:"100%",background:`linear-gradient(90deg,${P.peach},${P.coral})`,borderRadius:4,transition:"width .12s linear"}}/>
         </div>
       </div>
       <button onClick={onClose} style={{background:"none",border:"none",color:P.muted,fontSize:26,cursor:"pointer",padding:4,lineHeight:1}}>✕</button>
@@ -200,196 +192,149 @@ function App(){
   const go=(v,p)=>{setTr(true);setTimeout(()=>{setView(v);if(v==="ms")setCat(p);if(v==="fs")setAge(p);setTr(false);window.scrollTo({top:0,behavior:"smooth"});},220);};
   const back=()=>{if(view==="ms")go("med");else if(view==="fs")go("tales");else go("home");};
 
+  const bgMap=c=>({[P.peach]:"linear-gradient(160deg,#FDF0E8,#F9E4D8)",[P.sage]:"linear-gradient(160deg,#E8F2E8,#DCEADC)",[P.lavender]:"linear-gradient(160deg,#F0E8F5,#E8DDF2)",[P.gold]:"linear-gradient(160deg,#F8F0DC,#F2E8C8)",[P.sky]:"linear-gradient(160deg,#E4F0F6,#D8E8F0)"}[c]||P.cream);
+
   return (
     <div style={{minHeight:"100vh",position:"relative",paddingBottom:playing?84:0}}>
-      <AbstractBg />
-
+      <AbstractBg/>
       <div style={{position:"relative",zIndex:1,maxWidth:920,margin:"0 auto",padding:"48px 36px",opacity:tr?0:1,transform:tr?"translateY(8px)":"",transition:"opacity .22s,transform .22s"}}>
 
-        {/* BACK */}
-        {view!=="home"&&(
-          <A><button onClick={back} style={{background:"#fff",border:"1.5px solid "+P.blush,borderRadius:14,padding:"10px 24px",color:P.muted,fontSize:14,cursor:"pointer",fontFamily:"'Quicksand',sans-serif",fontWeight:700,marginBottom:36,transition:"all .2s",boxShadow:"0 2px 8px rgba(0,0,0,0.04)"}}
-            onMouseEnter={e=>{e.currentTarget.style.borderColor=P.coral;e.currentTarget.style.color=P.coral;}}
-            onMouseLeave={e=>{e.currentTarget.style.borderColor=P.blush;e.currentTarget.style.color=P.muted;}}>
-            ← zpět
-          </button></A>
-        )}
+        {view!=="home"&&<A><button onClick={back} style={{background:"#fff",border:`1.5px solid ${P.blush}`,borderRadius:14,padding:"10px 24px",color:P.muted,fontSize:14,cursor:"pointer",fontFamily:"'Quicksand',sans-serif",fontWeight:700,marginBottom:36,transition:"all .2s",boxShadow:"0 2px 8px rgba(0,0,0,.04)"}}
+          onMouseEnter={e=>{e.currentTarget.style.borderColor=P.coral;e.currentTarget.style.color=P.coral;}}
+          onMouseLeave={e=>{e.currentTarget.style.borderColor=P.blush;e.currentTarget.style.color=P.muted;}}>← zpět</button></A>}
 
-        {/* ═══════ HOME ═══════ */}
+        {/* ═══ HOME ═══ */}
         {view==="home"&&<>
-          <A>
-            <div style={{textAlign:"center",marginTop:60,marginBottom:72}}>
-              {/* ornamental divider */}
-              <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14,marginBottom:32}}>
-                <div style={{width:50,height:1.5,background:"linear-gradient(90deg,transparent,"+P.peach+")",borderRadius:2}} />
-                <svg width="28" height="28" viewBox="0 0 28 28" style={{animation:"breathe 4s ease-in-out infinite"}}>
-                  <circle cx="14" cy="14" r="12" fill="none" stroke={P.peach} strokeWidth="1.5" opacity="0.5" />
-                  <circle cx="14" cy="14" r="6" fill="none" stroke={P.coral} strokeWidth="1" opacity="0.4" />
-                  <circle cx="14" cy="14" r="2.5" fill={P.coral} opacity="0.6" />
-                </svg>
-                <div style={{width:50,height:1.5,background:"linear-gradient(90deg,"+P.peach+",transparent)",borderRadius:2}} />
-              </div>
-              <h1 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(52px,9vw,96px)",fontWeight:400,letterSpacing:"0.01em",lineHeight:1,color:P.deep,fontStyle:"italic"}}>
-                Ty a Tvé
-              </h1>
-              <p style={{marginTop:22,fontSize:"clamp(15px,2vw,18px)",lineHeight:1.8,color:P.muted,maxWidth:500,margin:"22px auto 0",fontWeight:500}}>
-                Prostor pro vnitřní klid. Meditace pro dospělé, pohádky pro&nbsp;nejmenší. Protože každý si zaslouží chvíli ticha.
-              </p>
+          <A><div style={{textAlign:"center",marginTop:60,marginBottom:72}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14,marginBottom:32}}>
+              <div style={{width:50,height:1.5,background:`linear-gradient(90deg,transparent,${P.peach})`,borderRadius:2}}/>
+              <svg width="28" height="28" viewBox="0 0 28 28" style={{animation:"breathe 4s ease-in-out infinite"}}><circle cx="14" cy="14" r="12" fill="none" stroke={P.peach} strokeWidth="1.5" opacity=".5"/><circle cx="14" cy="14" r="6" fill="none" stroke={P.coral} strokeWidth="1" opacity=".4"/><circle cx="14" cy="14" r="2.5" fill={P.coral} opacity=".6"/></svg>
+              <div style={{width:50,height:1.5,background:`linear-gradient(90deg,${P.peach},transparent)`,borderRadius:2}}/>
             </div>
-          </A>
+            <h1 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(52px,9vw,96px)",fontWeight:400,letterSpacing:"0.01em",lineHeight:1,color:P.deep,fontStyle:"italic"}}>Ty a Tvé</h1>
+            <p style={{marginTop:22,fontSize:"clamp(15px,2vw,18px)",lineHeight:1.8,color:P.muted,maxWidth:500,margin:"22px auto 0",fontWeight:500}}>Prostor pro vnitřní klid. Meditace pro dospělé, pohádky pro&nbsp;nejmenší. Protože každý si zaslouží chvíli ticha.</p>
+          </div></A>
 
           <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:24,maxWidth:740,margin:"0 auto"}}>
             {[
-              {k:"med",t:"Meditace",s:"Vedené meditace pro klid mysli a rovnováhu těla",icon:"◯",color:P.lavender,grad:"linear-gradient(160deg,#F0E8F5,#E8DDF2)",shadow:"rgba(184,169,212,0.2)"},
-              {k:"tales",t:"Pohádky na dobrou noc",s:"Pro děti 2–4 roky · usínání s příběhem",icon:"☽",color:P.sage,grad:"linear-gradient(160deg,#E8F2E8,#DCEADC)",shadow:"rgba(141,180,142,0.2)"},
+              {k:"med",t:"Meditace",s:"Vedené meditace pro klid mysli a rovnováhu těla",icon:"◯",color:P.lavender,grad:"linear-gradient(160deg,#F0E8F5,#E8DDF2)",shadow:"rgba(184,169,212,.2)"},
+              {k:"tales",t:"Pohádky na dobrou noc",s:"Pro děti 2–4 roky · usínání s příběhem",icon:"☽",color:P.sage,grad:"linear-gradient(160deg,#E8F2E8,#DCEADC)",shadow:"rgba(141,180,142,.2)"},
             ].map((it,i)=>(
-              <A key={it.k} i={i+1} d={0.12}>
-                <button onClick={()=>go(it.k)} style={{width:"100%",background:it.grad,border:"1.5px solid rgba(255,255,255,0.8)",borderRadius:28,padding:"48px 36px",cursor:"pointer",textAlign:"center",transition:"all .35s cubic-bezier(.16,1,.3,1)",position:"relative",overflow:"hidden",boxShadow:"0 8px 32px "+it.shadow+", inset 0 1px 0 rgba(255,255,255,0.6)"}}
-                  onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px)";e.currentTarget.style.boxShadow="0 20px 48px "+it.shadow.replace("0.2","0.35");}}
-                  onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="0 8px 32px "+it.shadow+", inset 0 1px 0 rgba(255,255,255,0.6)";}}>
-                  {/* decorative bg circle */}
-                  <div style={{position:"absolute",top:-30,right:-30,width:140,height:140,borderRadius:"50%",background:it.color,opacity:0.08}} />
-                  <div style={{position:"absolute",bottom:-20,left:-20,width:100,height:100,borderRadius:"50%",background:it.color,opacity:0.06}} />
-                  <span style={{fontFamily:"'DM Serif Display',serif",fontSize:52,color:it.color,display:"block",marginBottom:20,fontStyle:"italic",opacity:0.7}}>{it.icon}</span>
-                  <div style={{fontFamily:"'DM Serif Display',serif",fontSize:26,fontWeight:400,marginBottom:10,color:P.deep}}>{it.t}</div>
-                  <div style={{fontSize:14,color:P.muted,fontWeight:500,lineHeight:1.6,maxWidth:260,margin:"0 auto"}}>{it.s}</div>
-                  <div style={{marginTop:24,display:"inline-flex",alignItems:"center",gap:8,background:"#fff",padding:"10px 24px",borderRadius:14,fontSize:14,fontWeight:700,color:P.coral,boxShadow:"0 2px 8px rgba(0,0,0,0.05)",transition:"transform .2s"}}
-                    >Prozkoumat →</div>
-                </button>
-              </A>
+              <A key={it.k} i={i+1} d={.12}><button onClick={()=>go(it.k)} style={{width:"100%",background:it.grad,border:"1.5px solid rgba(255,255,255,.8)",borderRadius:28,padding:"48px 36px",cursor:"pointer",textAlign:"center",transition:"all .35s cubic-bezier(.16,1,.3,1)",position:"relative",overflow:"hidden",minHeight:240,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",boxShadow:`0 8px 32px ${it.shadow}, inset 0 1px 0 rgba(255,255,255,.6)`}}
+                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px)";e.currentTarget.style.boxShadow=`0 20px 48px ${it.shadow.replace(".2",".35")}`;}}
+                onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 8px 32px ${it.shadow}, inset 0 1px 0 rgba(255,255,255,.6)`;}}>
+                <div style={{position:"absolute",top:-30,right:-30,width:140,height:140,borderRadius:"50%",background:it.color,opacity:.08}}/>
+                <div style={{position:"absolute",bottom:-20,left:-20,width:100,height:100,borderRadius:"50%",background:it.color,opacity:.06}}/>
+                <span style={{fontFamily:"'DM Serif Display',serif",fontSize:52,color:it.color,display:"block",marginBottom:20,fontStyle:"italic",opacity:.7}}>{it.icon}</span>
+                <div style={{fontFamily:"'DM Serif Display',serif",fontSize:26,fontWeight:400,marginBottom:10,color:P.deep}}>{it.t}</div>
+                <div style={{fontSize:14,color:P.muted,fontWeight:500,lineHeight:1.6,maxWidth:260,margin:"0 auto"}}>{it.s}</div>
+                <div style={{marginTop:24,display:"inline-flex",alignItems:"center",gap:8,background:"#fff",padding:"10px 24px",borderRadius:14,fontSize:14,fontWeight:700,color:P.coral,boxShadow:"0 2px 8px rgba(0,0,0,.05)"}}>Prozkoumat →</div>
+              </button></A>
             ))}
           </div>
 
-          <A i={4} d={0.18}>
-            <div style={{textAlign:"center",marginTop:64}}>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14,marginBottom:10}}>
-                <div style={{width:40,height:1,background:"linear-gradient(90deg,transparent,"+P.blush+")"}} />
-                <span style={{fontSize:11,color:P.blush}}>✦</span>
-                <div style={{width:40,height:1,background:"linear-gradient(90deg,"+P.blush+",transparent)"}} />
-              </div>
-              <p style={{fontSize:13,color:P.muted,fontWeight:600,letterSpacing:"0.08em",textTransform:"uppercase",opacity:0.6}}>S láskou připravila vaše jóga instruktorka</p>
+          <A i={4} d={.18}><div style={{textAlign:"center",marginTop:64}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:14,marginBottom:10}}>
+              <div style={{width:40,height:1,background:`linear-gradient(90deg,transparent,${P.blush})`}}/><span style={{fontSize:11,color:P.blush}}>✦</span><div style={{width:40,height:1,background:`linear-gradient(90deg,${P.blush},transparent)`}}/>
             </div>
-          </A>
+            <p style={{fontSize:13,color:P.muted,fontWeight:600,letterSpacing:".08em",textTransform:"uppercase",opacity:.6}}>S láskou připravila vaše jóga instruktorka</p>
+          </div></A>
         </>}
 
-        {/* ═══════ MEDITATION CATEGORIES ═══════ */}
+        {/* ═══ MEDITATION CATEGORIES ═══ */}
         {view==="med"&&<>
-          <A>
-            <div style={{textAlign:"center",marginBottom:44}}>
-              <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(32px,5vw,52px)",fontWeight:400,fontStyle:"italic",marginBottom:10,color:P.deep}}>Meditace</h2>
-              <p style={{color:P.muted,fontSize:16,maxWidth:400,margin:"0 auto",fontWeight:500}}>Vyberte druh, který vám právě sedí.</p>
-            </div>
-          </A>
+          <A><div style={{textAlign:"center",marginBottom:44}}>
+            <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(32px,5vw,52px)",fontWeight:400,fontStyle:"italic",marginBottom:10,color:P.deep}}>Meditace</h2>
+            <p style={{color:P.muted,fontSize:16,maxWidth:400,margin:"0 auto",fontWeight:500}}>Vyberte druh, který vám právě sedí.</p>
+          </div></A>
           <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:18,maxWidth:800,margin:"0 auto"}}>
-            {CATEGORIES.map((c,i)=>{
-              const bgMap={[P.peach]:"linear-gradient(160deg,#FDF0E8,#F9E4D8)",[P.sage]:"linear-gradient(160deg,#E8F2E8,#DCEADC)",[P.lavender]:"linear-gradient(160deg,#F0E8F5,#E8DDF2)",[P.gold]:"linear-gradient(160deg,#F8F0DC,#F2E8C8)",[P.sky]:"linear-gradient(160deg,#E4F0F6,#D8E8F0)"};
-              return (
-                <A key={c.id} i={i} d={0.06}>
-                  <button onClick={()=>go("ms",c)} style={{width:"100%",background:bgMap[c.color]||P.cream,border:"1.5px solid rgba(255,255,255,0.7)",borderRadius:24,padding:"32px 24px",cursor:"pointer",textAlign:"center",transition:"all .3s cubic-bezier(.16,1,.3,1)",minHeight:180,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",boxShadow:`0 6px 24px ${c.color}20, inset 0 1px 0 rgba(255,255,255,0.5)`}}
-                    onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-6px)";e.currentTarget.style.boxShadow=`0 16px 40px ${c.color}30`;}}
-                    onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 6px 24px ${c.color}20, inset 0 1px 0 rgba(255,255,255,0.5)`;}}>
-                    <span style={{fontSize:40,marginBottom:14}}>{c.icon}</span>
-                    <div style={{fontFamily:"'DM Serif Display',serif",fontSize:20,fontWeight:400,marginBottom:4,color:P.deep}}>{c.title}</div>
-                    <div style={{fontSize:13,color:P.muted,fontWeight:500}}>{c.subtitle}</div>
-                    <div style={{marginTop:14,fontSize:11,color:c.color,fontWeight:700,letterSpacing:"0.06em",textTransform:"uppercase",background:"#fff",padding:"4px 14px",borderRadius:8}}>{c.sessions.length} nahrávky</div>
-                  </button>
-                </A>
-              );
-            })}
+            {CATEGORIES.map((c,i)=>(
+              <A key={c.id} i={i} d={.06}><button onClick={()=>go("ms",c)} style={{width:"100%",background:bgMap(c.color),border:"1.5px solid rgba(255,255,255,.7)",borderRadius:24,padding:"32px 24px",cursor:"pointer",textAlign:"center",transition:"all .3s cubic-bezier(.16,1,.3,1)",minHeight:180,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",boxShadow:`0 6px 24px ${c.color}20, inset 0 1px 0 rgba(255,255,255,.5)`}}
+                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-6px)";e.currentTarget.style.boxShadow=`0 16px 40px ${c.color}30`;}}
+                onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 6px 24px ${c.color}20, inset 0 1px 0 rgba(255,255,255,.5)`;}}>
+                <span style={{fontSize:40,marginBottom:14}}>{c.icon}</span>
+                <div style={{fontFamily:"'DM Serif Display',serif",fontSize:20,fontWeight:400,marginBottom:4,color:P.deep}}>{c.title}</div>
+                <div style={{fontSize:13,color:P.muted,fontWeight:500}}>{c.subtitle}</div>
+                <div style={{marginTop:14,fontSize:11,color:c.color,fontWeight:700,letterSpacing:".06em",textTransform:"uppercase",background:"#fff",padding:"4px 14px",borderRadius:8}}>{c.sessions.length} nahrávky</div>
+              </button></A>
+            ))}
           </div>
         </>}
 
-        {/* ═══════ MEDITATION SESSIONS ═══════ */}
+        {/* ═══ MEDITATION SESSIONS ═══ */}
         {view==="ms"&&cat&&<>
-          <A>
-            <div style={{textAlign:"center",marginBottom:40}}>
-              <span style={{fontSize:48,display:"block",marginBottom:14}}>{cat.icon}</span>
-              <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(30px,5vw,44px)",fontWeight:400,fontStyle:"italic",margin:0,color:P.deep}}>{cat.title}</h2>
-              <p style={{color:P.muted,fontSize:15,marginTop:8,fontWeight:500}}>{cat.subtitle}</p>
-            </div>
-          </A>
+          <A><div style={{textAlign:"center",marginBottom:40}}>
+            <span style={{fontSize:48,display:"block",marginBottom:14}}>{cat.icon}</span>
+            <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(30px,5vw,44px)",fontWeight:400,fontStyle:"italic",margin:0,color:P.deep}}>{cat.title}</h2>
+            <p style={{color:P.muted,fontSize:15,marginTop:8,fontWeight:500}}>{cat.subtitle}</p>
+          </div></A>
           <div style={{maxWidth:660,margin:"0 auto",display:"flex",flexDirection:"column",gap:12}}>
             {cat.sessions.map((s,i)=>(
-              <A key={s.id} i={i} d={0.06}>
-                <div onClick={()=>setPlaying({...s,icon:cat.icon})} style={{background:"#fff",border:"1.5px solid "+(playing?.id===s.id?cat.color:P.blush),borderRadius:18,padding:"22px 26px",cursor:"pointer",display:"flex",alignItems:"center",gap:18,transition:"all .25s",boxShadow:playing?.id===s.id?`0 6px 24px ${cat.color}20`:"0 2px 10px rgba(0,0,0,0.04)"}}
-                  onMouseEnter={e=>{e.currentTarget.style.borderColor=cat.color;e.currentTarget.style.boxShadow=`0 8px 28px ${cat.color}18`;e.currentTarget.style.transform="translateY(-2px)";}}
-                  onMouseLeave={e=>{e.currentTarget.style.borderColor=playing?.id===s.id?cat.color:P.blush;e.currentTarget.style.boxShadow=playing?.id===s.id?`0 6px 24px ${cat.color}20`:"0 2px 10px rgba(0,0,0,0.04)";e.currentTarget.style.transform="";}}>
-                  <div style={{width:50,height:50,borderRadius:"50%",background:cat.color+"18",display:"flex",alignItems:"center",justifyContent:"center",color:cat.color,fontSize:16,flexShrink:0,fontWeight:900,transition:"all .2s"}}>▶</div>
-                  <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontSize:16,fontWeight:700,color:P.deep}}>{s.title}</div>
-                    <div style={{fontSize:13,color:P.muted,marginTop:4,fontWeight:500}}>{s.desc}</div>
-                  </div>
-                  <span style={{fontSize:13,color:P.muted,marginRight:10,flexShrink:0,fontWeight:600,opacity:0.6}}>{s.duration}</span>
-                  <DlBtn onClick={()=>setDlItem({...s,icon:cat.icon})} />
+              <A key={s.id} i={i} d={.06}><div onClick={()=>setPlaying({...s,icon:cat.icon})} style={{background:"#fff",border:`1.5px solid ${playing?.id===s.id?cat.color:P.blush}`,borderRadius:18,padding:"22px 26px",cursor:"pointer",display:"flex",alignItems:"center",gap:18,transition:"all .25s",boxShadow:playing?.id===s.id?`0 6px 24px ${cat.color}20`:"0 2px 10px rgba(0,0,0,.04)"}}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor=cat.color;e.currentTarget.style.boxShadow=`0 8px 28px ${cat.color}18`;e.currentTarget.style.transform="translateY(-2px)";}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor=playing?.id===s.id?cat.color:P.blush;e.currentTarget.style.boxShadow=playing?.id===s.id?`0 6px 24px ${cat.color}20`:"0 2px 10px rgba(0,0,0,.04)";e.currentTarget.style.transform="";}}>
+                <div style={{width:50,height:50,borderRadius:"50%",background:cat.color+"18",display:"flex",alignItems:"center",justifyContent:"center",color:cat.color,fontSize:16,flexShrink:0,fontWeight:900}}>▶</div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:16,fontWeight:700,color:P.deep}}>{s.title}</div>
+                  <div style={{fontSize:13,color:P.muted,marginTop:4,fontWeight:500}}>{s.desc}</div>
                 </div>
-              </A>
+                <span style={{fontSize:13,color:P.muted,marginRight:10,flexShrink:0,fontWeight:600,opacity:.6}}>{s.duration}</span>
+                <DlBtn onClick={()=>setDlItem({...s,icon:cat.icon})}/>
+              </div></A>
             ))}
           </div>
         </>}
 
-        {/* ═══════ TALES AGE ═══════ */}
+        {/* ═══ TALES AGE ═══ */}
         {view==="tales"&&<>
-          <A>
-            <div style={{textAlign:"center",marginBottom:44}}>
-              <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(32px,5vw,52px)",fontWeight:400,fontStyle:"italic",marginBottom:10,color:P.deep}}>Pohádky na dobrou noc</h2>
-              <p style={{color:P.muted,fontSize:16,maxWidth:380,margin:"0 auto",fontWeight:500}}>Kolik je vašemu malému posluchači?</p>
-            </div>
-          </A>
+          <A><div style={{textAlign:"center",marginBottom:44}}>
+            <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(32px,5vw,52px)",fontWeight:400,fontStyle:"italic",marginBottom:10,color:P.deep}}>Pohádky na dobrou noc</h2>
+            <p style={{color:P.muted,fontSize:16,maxWidth:380,margin:"0 auto",fontWeight:500}}>Kolik je vašemu malému posluchači?</p>
+          </div></A>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:18,maxWidth:480,margin:"0 auto"}}>
             {[2,3,4].map((a,i)=>{
-              const cs=[P.peach,P.sage,P.lavender];
-              const gs=["linear-gradient(160deg,#FDF0E8,#F9E4D8)","linear-gradient(160deg,#E8F2E8,#DCEADC)","linear-gradient(160deg,#F0E8F5,#E8DDF2)"];
-              const ics=["🧸","🦋","🌟"];
-              return (
-                <A key={a} i={i} d={0.08}>
-                  <button onClick={()=>go("fs",a)} style={{width:"100%",aspectRatio:"1/1.2",background:gs[i],border:"1.5px solid rgba(255,255,255,0.7)",borderRadius:24,padding:20,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,transition:"all .3s cubic-bezier(.16,1,.3,1)",boxShadow:`0 6px 24px ${cs[i]}20, inset 0 1px 0 rgba(255,255,255,0.5)`}}
-                    onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-7px) scale(1.02)";e.currentTarget.style.boxShadow=`0 20px 48px ${cs[i]}30`;}}
-                    onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 6px 24px ${cs[i]}20, inset 0 1px 0 rgba(255,255,255,0.5)`;}}>
-                    <span style={{fontSize:44}}>{ics[i]}</span>
-                    <span style={{fontFamily:"'DM Serif Display',serif",fontSize:40,fontWeight:400,color:P.deep}}>{a}</span>
-                    <span style={{fontSize:14,color:P.muted,fontWeight:600}}>roky</span>
-                  </button>
-                </A>
-              );
+              const cs=[P.peach,P.sage,P.lavender];const gs=["linear-gradient(160deg,#FDF0E8,#F9E4D8)","linear-gradient(160deg,#E8F2E8,#DCEADC)","linear-gradient(160deg,#F0E8F5,#E8DDF2)"];const ics=["🧸","🦋","🌟"];
+              return <A key={a} i={i} d={.08}><button onClick={()=>go("fs",a)} style={{width:"100%",aspectRatio:"1/1.2",background:gs[i],border:"1.5px solid rgba(255,255,255,.7)",borderRadius:24,padding:20,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,transition:"all .3s cubic-bezier(.16,1,.3,1)",boxShadow:`0 6px 24px ${cs[i]}20, inset 0 1px 0 rgba(255,255,255,.5)`}}
+                onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-7px) scale(1.02)";e.currentTarget.style.boxShadow=`0 20px 48px ${cs[i]}30`;}}
+                onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow=`0 6px 24px ${cs[i]}20, inset 0 1px 0 rgba(255,255,255,.5)`;}}>
+                <span style={{fontSize:44}}>{ics[i]}</span>
+                <span style={{fontFamily:"'DM Serif Display',serif",fontSize:40,fontWeight:400,color:P.deep}}>{a}</span>
+                <span style={{fontSize:14,color:P.muted,fontWeight:600}}>roky</span>
+              </button></A>;
             })}
           </div>
         </>}
 
-        {/* ═══════ TALE SESSIONS ═══════ */}
+        {/* ═══ TALE SESSIONS ═══ */}
         {view==="fs"&&age&&<>
-          <A>
-            <div style={{textAlign:"center",marginBottom:40}}>
-              <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(30px,5vw,44px)",fontWeight:400,fontStyle:"italic",margin:0,color:P.deep}}>Pohádky pro {age}leté</h2>
-              <p style={{color:P.muted,fontSize:15,marginTop:8,fontWeight:500}}>{TALES[age].length} pohádek k poslechu</p>
-            </div>
-          </A>
+          <A><div style={{textAlign:"center",marginBottom:40}}>
+            <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(30px,5vw,44px)",fontWeight:400,fontStyle:"italic",margin:0,color:P.deep}}>Pohádky pro {age}leté</h2>
+            <p style={{color:P.muted,fontSize:15,marginTop:8,fontWeight:500}}>{TALES[age].length} pohádek k poslechu</p>
+          </div></A>
           <div style={{maxWidth:660,margin:"0 auto",display:"flex",flexDirection:"column",gap:12}}>
             {TALES[age].map((t,i)=>(
-              <A key={t.id} i={i} d={0.05}>
-                <div onClick={()=>setPlaying(t)} style={{background:"#fff",border:"1.5px solid "+(playing?.id===t.id?P.sage:P.blush),borderRadius:18,padding:"22px 26px",cursor:"pointer",display:"flex",alignItems:"center",gap:18,transition:"all .25s",boxShadow:playing?.id===t.id?`0 6px 24px ${P.sage}20`:"0 2px 10px rgba(0,0,0,0.04)"}}
-                  onMouseEnter={e=>{e.currentTarget.style.borderColor=P.sage;e.currentTarget.style.boxShadow=`0 8px 28px ${P.sage}18`;e.currentTarget.style.transform="translateY(-2px)";}}
-                  onMouseLeave={e=>{e.currentTarget.style.borderColor=playing?.id===t.id?P.sage:P.blush;e.currentTarget.style.boxShadow=playing?.id===t.id?`0 6px 24px ${P.sage}20`:"0 2px 10px rgba(0,0,0,0.04)";e.currentTarget.style.transform="";}}>
-                  <span style={{fontSize:38}}>{t.icon}</span>
-                  <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontSize:16,fontWeight:700,color:P.deep}}>{t.title}</div>
-                    <div style={{fontSize:13,color:P.muted,marginTop:3,fontWeight:500}}>{t.duration}</div>
-                  </div>
-                  <DlBtn onClick={()=>setDlItem(t)} />
+              <A key={t.id} i={i} d={.05}><div onClick={()=>setPlaying(t)} style={{background:"#fff",border:`1.5px solid ${playing?.id===t.id?P.sage:P.blush}`,borderRadius:18,padding:"22px 26px",cursor:"pointer",display:"flex",alignItems:"center",gap:18,transition:"all .25s",boxShadow:playing?.id===t.id?`0 6px 24px ${P.sage}20`:"0 2px 10px rgba(0,0,0,.04)"}}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor=P.sage;e.currentTarget.style.boxShadow=`0 8px 28px ${P.sage}18`;e.currentTarget.style.transform="translateY(-2px)";}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor=playing?.id===t.id?P.sage:P.blush;e.currentTarget.style.boxShadow=playing?.id===t.id?`0 6px 24px ${P.sage}20`:"0 2px 10px rgba(0,0,0,.04)";e.currentTarget.style.transform="";}}>
+                <span style={{fontSize:38}}>{t.icon}</span>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:16,fontWeight:700,color:P.deep}}>{t.title}</div>
+                  <div style={{fontSize:13,color:P.muted,marginTop:3,fontWeight:500}}>{t.duration}</div>
                 </div>
-              </A>
+                <DlBtn onClick={()=>setDlItem(t)}/>
+              </div></A>
             ))}
           </div>
         </>}
 
       </div>
-
-      {playing && <Player session={playing} onClose={()=>setPlaying(null)} />}
-      {dlItem && <Modal item={dlItem} onClose={()=>setDlItem(null)} />}
+      {playing&&<Player session={playing} onClose={()=>setPlaying(null)}/>}
+      {dlItem&&<Modal item={dlItem} onClose={()=>setDlItem(null)}/>}
     </div>
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 </body>
 </html>
